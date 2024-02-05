@@ -60,13 +60,12 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
         for (unsigned int j = 0; j < m_numberOfParticles; j++) {
             for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
                 bool acceptedStep = m_solver->step(stepLength, *m_waveFunction, m_particles, j, d);
-
-                /* Here you should sample the energy (and maybe other things) using the
-                * sampler instance of the Sampler class.
-                */
                 numberOfAcceptedSteps += acceptedStep;
             }
         }
+        /* Here you should sample the energy (and maybe other things) using the
+        * sampler instance of the Sampler class.
+        */
         sampler->sample(numberOfAcceptedSteps, this);
     }
 
