@@ -33,7 +33,11 @@ unsigned int System::runEquilibrationSteps(
     unsigned int acceptedSteps = 0;
 
     for (unsigned int i = 0; i < numberOfEquilibrationSteps; i++) {
-        acceptedSteps += m_solver->step(stepLength, *m_waveFunction, m_particles);
+        for (unsigned int j = 0; j < m_numberOfParticles; j++) {
+            for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
+                acceptedSteps += m_solver->step(stepLength, *m_waveFunction, m_particles, 0 ,0);
+            }
+        }
     }
 
     return acceptedSteps;
@@ -52,12 +56,18 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
     for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
         /* Call solver method to do a single Monte-Carlo step.
          */
-        bool acceptedStep = m_solver->step(stepLength, *m_waveFunction, m_particles);
+        unsigned int numberOfAcceptedSteps = 0;
+        for (unsigned int j = 0; j < m_numberOfParticles; j++) {
+            for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
+                bool acceptedStep = m_solver->step(stepLength, *m_waveFunction, m_particles, j, d);
 
-        /* Here you should sample the energy (and maybe other things) using the
-         * sampler instance of the Sampler class.
-         */
-        sampler->sample(acceptedStep, this);
+                /* Here you should sample the energy (and maybe other things) using the
+                * sampler instance of the Sampler class.
+                */
+                numberOfAcceptedSteps += acceptedStep;
+            }
+        }
+        sampler->sample(numberOfAcceptedSteps, this);
     }
 
     sampler->computeAverages();

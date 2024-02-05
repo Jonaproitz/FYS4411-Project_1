@@ -15,19 +15,34 @@ Metropolis::Metropolis(std::unique_ptr<class Random> rng)
 bool Metropolis::step(
         double stepLength,
         class WaveFunction& waveFunction,
-        std::vector<std::unique_ptr<class Particle>>& particles){
+        std::vector<std::unique_ptr<class Particle>>& particles,
+        unsigned int particle_i,
+        unsigned int dimension){
+    double alpha = waveFunction.getParameters()[0];
     Random ran;
     double sl = (ran.nextDouble()-0.5)*stepLength;
     double val = ran.nextDouble();
-    double x = particles[0]->getPosition()[0] + sl;
-    double wav = exp(-(0.5*x*x));
-    double wav_old = waveFunction.evaluate(particles);
-    double check = wav*wav / (wav_old*wav_old);
+    /*
+    std::vector<double> r = particles[0]->getPosition();
+    for (unsigned int i = 0; i<r.size(); i++){
+        double x = r[i];
+        double x_new = x + sl;
+        double check = exp(alpha*(x-x_new));
+        bool a = val<=check;
+        if (a)
+            {particles[0]->adjustPosition(sl, i);}
+    }
+    */
+    //double x = particles[0]->getPosition()[dimension];
+    //double wav = exp(-(0.5*x*x));
+    //double wav_old = waveFunction.evaluate(particles);
+    //double check = wav*wav / (wav_old*wav_old);
+    double check = exp(2*alpha*sl);
     bool a = val<=check;
 
     if (a)
-    {particles[0]->adjustPosition(sl, 0);
+    {particles[particle_i]->adjustPosition(sl, dimension);
 }
-
+    
     return a;
 }

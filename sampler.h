@@ -10,7 +10,7 @@ public:
         unsigned int numberOfMetropolisSteps);
 
 
-    void sample(bool acceptedStep, class System* system);
+    void sample(unsigned int acceptedStep, class System* system);
     void printOutputToTerminal(class System& system);
     void computeAverages();
     double getEnergy() { return m_energy; }

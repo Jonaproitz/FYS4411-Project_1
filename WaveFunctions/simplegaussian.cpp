@@ -24,6 +24,15 @@ double SimpleGaussian::evaluate(std::vector<std::unique_ptr<class Particle>>& pa
 
 double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class Particle>>& particles) {
     double alpha = m_parameters[0];
-    double x = particles[0]->getPosition()[0];
-    return 2*alpha*(2*alpha*x*x - 1);
+    double E = 0.0;
+    for (unsigned int j=0; j < particles.size(); j++) {
+        std::vector<double> r = particles[j]->getPosition();
+        double r2 = 0;
+        unsigned int d = r.size();
+        for (unsigned int i=0; i<d; i++){
+            r2 = r2 + r[i]*r[i];
+        }
+        E += 2*alpha*(2*alpha*r2 - d);
+    }
+    return E;
 }
