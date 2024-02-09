@@ -21,7 +21,6 @@ bool Metropolis::step(
     double alpha = waveFunction.getParameters()[0];
     Random ran;
     double sl = (ran.nextDouble()-0.5)*stepLength;
-    double val = ran.nextDouble();
     /*
     std::vector<double> r = particles[0]->getPosition();
     for (unsigned int i = 0; i<r.size(); i++){
@@ -37,8 +36,9 @@ bool Metropolis::step(
     //double wav = exp(-(0.5*x*x));
     //double wav_old = waveFunction.evaluate(particles);
     //double check = wav*wav / (wav_old*wav_old);
-    double check = exp(2*alpha*sl);
-    bool a = val<=check;
+    double x = particles[particle_i]->getPosition()[dimension];
+    double check = (2*alpha*(2*alpha*(x+sl)*(x+sl) - 1))*(2*alpha*(2*alpha*(x+sl)*(x+sl) - 1))/(2*alpha*(2*alpha*x*x - 1)*2*alpha*(2*alpha*x*x - 1));//exp(2*alpha*sl);
+    bool a = ran.nextDouble()<=check;
 
     if (a)
     {particles[particle_i]->adjustPosition(sl, dimension);
