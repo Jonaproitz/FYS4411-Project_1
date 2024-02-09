@@ -26,21 +26,19 @@ System::System(
 }
 
 
-unsigned int System::runEquilibrationSteps(
+void System::runEquilibrationSteps(
         double stepLength,
         unsigned int numberOfEquilibrationSteps)
 {
-    unsigned int acceptedSteps = 0;
-
     for (unsigned int i = 0; i < numberOfEquilibrationSteps; i++) {
         for (unsigned int j = 0; j < m_numberOfParticles; j++) {
             for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
-                acceptedSteps += m_solver->step(stepLength, *m_waveFunction, m_particles, 0 ,0);
+                m_solver->step(stepLength, *m_waveFunction, m_particles, 0 ,0);
             }
         }
     }
 
-    return acceptedSteps;
+    return;
 }
 
 std::unique_ptr<class Sampler> System::runMetropolisSteps(

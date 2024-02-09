@@ -18,8 +18,8 @@ int main() {
     // Seed for the random number generator
     int seed = 2024;
 
-    unsigned int numberOfDimensions = 3;
-    unsigned int numberOfParticles = 3;
+    unsigned int numberOfDimensions = 2;
+    unsigned int numberOfParticles = 2;
     unsigned int numberOfMetropolisSteps = (unsigned int) 1e6;
     unsigned int numberOfEquilibrationSteps = (unsigned int) 1e5;
     double omega = 1.0; // Oscillator frequency.
@@ -42,7 +42,7 @@ int main() {
             std::move(particles));
 
     // Run steps to equilibrate particles
-    auto acceptedEquilibrationSteps = system->runEquilibrationSteps(
+    system->runEquilibrationSteps(
             stepLength,
             numberOfEquilibrationSteps);
 
