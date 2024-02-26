@@ -22,8 +22,10 @@ Sampler::Sampler(
     m_numberOfMetropolisSteps = numberOfMetropolisSteps;
     m_numberOfParticles = numberOfParticles;
     m_numberOfDimensions = numberOfDimensions;
-    m_energy = 0;
+    //m_energy = 0;
+    //m_energy2 = 0;
     m_cumulativeEnergy = 0;
+    m_cumulativeEnergy2 = 0;
     m_stepLength = stepLength;
     m_numberOfAcceptedSteps = 0;
 }
@@ -35,13 +37,14 @@ void Sampler::sample(unsigned int acceptedStep, System* system) {
      */
     auto localEnergy = system->computeLocalEnergy();
     m_cumulativeEnergy  += localEnergy;
+    m_cumulativeEnergy2  += localEnergy*localEnergy;
     m_stepNumber++;
     m_numberOfAcceptedSteps += acceptedStep;
 }
 
 void Sampler::printOutputToTerminal(System& system) {
     auto pa = system.getWaveFunctionParameters();
-    auto p = pa.size();
+    auto p = pa.size() - 1;
 
     cout << endl;
     cout << "  -- System info -- " << endl;
@@ -49,21 +52,26 @@ void Sampler::printOutputToTerminal(System& system) {
     cout << " Number of dimensions : " << m_numberOfDimensions << endl;
     cout << " Number of Metropolis steps run : 10^" << std::log10(m_numberOfMetropolisSteps) << endl;
     cout << " Step length used : " << m_stepLength << endl;
-    cout << " Ratio of accepted steps: " << ((double) m_numberOfAcceptedSteps) / ((double) m_numberOfMetropolisSteps*m_numberOfParticles*m_numberOfDimensions) << endl;
+    cout << " Ratio of accepted steps: " << ((double) m_numberOfAcceptedSteps) / ((double) m_numberOfMetropolisSteps*m_numberOfParticles*m_numberOfDimensions*p) << endl;
     cout << endl;
     cout << "  -- Wave function parameters -- " << endl;
     cout << " Number of parameters : " << p << endl;
     for (unsigned int i=0; i < p; i++) {
         cout << " Parameter " << i+1 << " : " << pa.at(i) << endl;
+        
+        cout << endl;
+        cout << "  -- Results -- " << endl;
+        cout << " Energy : " << m_energy.at(i) << endl;
+        cout << " Variance : " << m_energy2.at(i) - m_energy.at(i)*m_energy.at(i) << endl;
+        cout << endl;
     }
-    cout << endl;
-    cout << "  -- Results -- " << endl;
-    cout << " Energy : " << m_energy << endl;
-    cout << endl;
 }
 
 void Sampler::computeAverages() {
     /* Compute the averages of the sampled quantities.
      */
-    m_energy = m_cumulativeEnergy / m_numberOfMetropolisSteps;
+    m_energy.push_back(m_cumulativeEnergy / m_numberOfMetropolisSteps);
+    m_energy2.push_back(m_cumulativeEnergy2 / m_numberOfMetropolisSteps);
+    m_cumulativeEnergy = 0;
+    m_cumulativeEnergy2 = 0;
 }

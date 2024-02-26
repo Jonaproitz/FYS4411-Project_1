@@ -17,13 +17,21 @@ SimpleGaussian::SimpleGaussian(double alpha)
 }
 
 double SimpleGaussian::evaluate(std::vector<std::unique_ptr<class Particle>>& particles) {
-    double alpha = m_parameters[0];
-    double x = particles[0]->getPosition()[0];
-    return exp(-alpha*(x*x));
+    double alpha = m_parameters.back();
+    double E = 1;
+    double p = particles.size();
+    double d = particles[0]->getPosition().size();
+    for (unsigned int i = 0; i < p; i++){
+        for (unsigned int j = 0; j < d; j++) {
+            double x = particles.at(i)->getPosition().at(j);
+            E *= exp(-alpha*(x*x));
+        }
+    }
+    return E;
 }
 
 double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class Particle>>& particles) {
-    double alpha = m_parameters[0];
+    double alpha = m_parameters.back();
     double E = 0.0;
     for (unsigned int j=0; j < particles.size(); j++) {
         std::vector<double> r = particles[j]->getPosition();
@@ -35,4 +43,10 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
         E += 2*alpha*(2*alpha*r2 - d);
     }
     return E;
+}
+
+void SimpleGaussian::adjustAlpha(double adjust) {
+    m_numberOfParameters += 1;
+    double alpha = m_parameters.back();
+    m_parameters.push_back(alpha + adjust);
 }

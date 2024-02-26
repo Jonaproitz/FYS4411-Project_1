@@ -18,7 +18,9 @@ public:
 
     std::unique_ptr<class Sampler> runMetropolisSteps(
             double stepLength,
-            unsigned int numberOfMetropolisSteps);
+            unsigned int numberOfMetropolisSteps,
+            unsigned int MaxVariations,
+            double adjust);
 
     double computeLocalEnergy();
     const std::vector<double>& getWaveFunctionParameters();

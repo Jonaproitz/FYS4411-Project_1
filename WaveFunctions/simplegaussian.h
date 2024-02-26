@@ -9,4 +9,5 @@ public:
     SimpleGaussian(double alpha);
     double evaluate(std::vector<std::unique_ptr<class Particle>>& particles);
     double computeDoubleDerivative(std::vector<std::unique_ptr<class Particle>>& particles);
+    void adjustAlpha(double d);
 };
