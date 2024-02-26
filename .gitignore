@@ -259,3 +259,5 @@ vmc
 compile_project
 CMakeLists.txt
 MakeFile
+
+.vscode/
