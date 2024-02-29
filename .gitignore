@@ -261,3 +261,9 @@ CMakeLists.txt
 MakeFile
 
 .vscode/
+
+# Latex
+*.aux
+*.log
+*.out
+*.bib
