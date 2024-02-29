@@ -11,6 +11,7 @@ public:
     int getNumberOfParameters() { return m_numberOfParameters; }
     const std::vector<double>& getParameters() { return m_parameters; }
     virtual double evaluate(std::vector<std::unique_ptr<class Particle>>& particles) = 0;
+    virtual double evaluate1D(double x) = 0;
     virtual double computeDoubleDerivative(std::vector<std::unique_ptr<class Particle>>& particles) = 0;
     virtual void adjustAlpha(double adjust) = 0;
 

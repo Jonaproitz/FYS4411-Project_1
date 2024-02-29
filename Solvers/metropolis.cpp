@@ -18,17 +18,17 @@ bool Metropolis::step(
         std::vector<std::unique_ptr<class Particle>>& particles,
         unsigned int particle_i,
         unsigned int dimension){
-    double alpha = waveFunction.getParameters().back();
-    double wf_old = waveFunction.evaluate(particles);
+    double alpha = waveFunction.getParameters().at(0);
     Random ran;
     double sl = (ran.nextDouble()-0.5)*stepLength;
-    particles[particle_i]->adjustPosition(sl, dimension);
-    double wf_new = waveFunction.evaluate(particles);
+    double x = particles.at(particle_i)->getPosition().at(dimension);
+    double wf_old = waveFunction.evaluate1D(x);
+    double wf_new = waveFunction.evaluate1D(x+sl);
     double check = wf_new*wf_new/(wf_old*wf_old);
     bool a = ran.nextDouble()<=check;
 
-    if (a == false)
-    {particles[particle_i]->adjustPosition(-sl, dimension);
+    if (a == true)
+    {particles[particle_i]->adjustPosition(sl, dimension);
 }
     
     return a;

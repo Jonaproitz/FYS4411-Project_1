@@ -18,18 +18,24 @@ SimpleGaussian::SimpleGaussian(double alpha)
 }
 
 double SimpleGaussian::evaluate(std::vector<std::unique_ptr<class Particle>>& particles) {
-    // Define the wavefunction
-    double alpha = m_parameters.back();
+    // Define the wavefunction in nD for n particles from the definition of 1D
     double E = 1;
     double p = particles.size();
-    double d = particles[0]->getPosition().size();
+    double d = particles.at(0)->getPosition().size();
     for (unsigned int i = 0; i < p; i++){
         for (unsigned int j = 0; j < d; j++) {
             double x = particles.at(i)->getPosition().at(j);
-            E *= exp(-alpha*(x*x));
+            E *= evaluate1D(x);
         }
     }
     return E;
+}
+
+double SimpleGaussian::evaluate1D(double x) {
+    // Define the wavefunction for 1 dimension
+    // This is used for optimization in the metroplis algo
+    double alpha = m_parameters.back();
+    return exp(-alpha*(x*x));
 }
 
 double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class Particle>>& particles) {
