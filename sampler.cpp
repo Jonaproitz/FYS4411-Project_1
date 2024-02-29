@@ -33,9 +33,6 @@ Sampler::Sampler(
 
 
 void Sampler::sample(unsigned int acceptedStep, System* system) {
-    /* Here you should sample all the interesting things you want to measure.
-     * Note that there are (way) more than the single one here currently.
-     */
     auto localEnergy = system->computeLocalEnergy();
     m_cumulativeEnergy  += localEnergy;
     m_cumulativeEnergy2  += localEnergy*localEnergy;
@@ -74,8 +71,7 @@ void Sampler::printOutputToTerminal(System& system) {
 }
 
 void Sampler::computeAverages() {
-    /* Compute the averages of the sampled quantities.
-     */
+    // Compute the averages of the sampled quantities.
     m_energy.push_back(m_cumulativeEnergy / m_numberOfMetropolisSteps);
     double m_energy2 = m_cumulativeEnergy2 / m_numberOfMetropolisSteps;
     m_variance.push_back(m_energy2 - m_energy.back()*m_energy.back());

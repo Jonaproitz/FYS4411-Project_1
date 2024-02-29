@@ -19,6 +19,7 @@ int main() {
     // Seed for the random number generator
     int seed = 2024;
 
+    // Initial setup for simulation
     unsigned int numberOfDimensions = 1;
     unsigned int numberOfParticles = 1;
     unsigned int numberOfMetropolisSteps = (unsigned int) 1e5;
@@ -27,8 +28,8 @@ int main() {
     double alpha = 0.4; // Variational parameter.
     double stepLength = 1; // Metropolis step length.
 
+    // Set number of variations in alpha
     unsigned int MaxVariations = 10;
-    double adjust = 0.02;
 
     // The random engine can also be built without a seed
     auto rng = std::make_unique<Random>(seed);
@@ -56,7 +57,7 @@ int main() {
             numberOfMetropolisSteps,
             MaxVariations);
 
-    // Output information from the simulation
+    // Output information from the simulation to terminal
     sampler->printOutputToTerminal(*system);
 
     return 0;

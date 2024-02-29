@@ -49,7 +49,6 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
 }
 
 void SimpleGaussian::adjustAlpha(double adjust) {
-    // Adjust alpha, and store the new value
-    m_numberOfParameters += 1;
+    // Adjust alpha value
     m_parameters.at(0) += adjust;
 }
