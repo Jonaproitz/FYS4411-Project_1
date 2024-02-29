@@ -8,6 +8,7 @@
 #include "../system.h"
 #include "../particle.h"
 
+// Define parameters of the wavefunction
 SimpleGaussian::SimpleGaussian(double alpha)
 {
     assert(alpha >= 0);
@@ -17,6 +18,7 @@ SimpleGaussian::SimpleGaussian(double alpha)
 }
 
 double SimpleGaussian::evaluate(std::vector<std::unique_ptr<class Particle>>& particles) {
+    // Define the wavefunction
     double alpha = m_parameters.back();
     double E = 1;
     double p = particles.size();
@@ -31,7 +33,8 @@ double SimpleGaussian::evaluate(std::vector<std::unique_ptr<class Particle>>& pa
 }
 
 double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class Particle>>& particles) {
-    double alpha = m_parameters.back();
+    // Compute the local kinetic part of the local derivative
+    double alpha = m_parameters.at(0);
     double E = 0.0;
     for (unsigned int j=0; j < particles.size(); j++) {
         std::vector<double> r = particles[j]->getPosition();
@@ -46,7 +49,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
 }
 
 void SimpleGaussian::adjustAlpha(double adjust) {
+    // Adjust alpha, and store the new value
     m_numberOfParameters += 1;
-    double alpha = m_parameters.back();
-    m_parameters.push_back(alpha + adjust);
+    m_parameters.at(0) += adjust;
 }

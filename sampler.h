@@ -15,6 +15,9 @@ public:
     void printOutputToTerminal(class System& system);
     void computeAverages();
     double getEnergy() { return m_energy.back(); }
+    double getVariance() {return m_variance.back(); }
+    void printOutputToFile(class System& system);
+    void storeAlphaValues(double a) {m_alphaValues.push_back(a);}
 
 private:
     unsigned int m_stepNumber = 0;
@@ -23,7 +26,8 @@ private:
     unsigned int m_numberOfDimensions = 0;
     unsigned int m_numberOfAcceptedSteps = 0;
     std::vector<double> m_energy;
-    std::vector<double> m_energy2;
+    std::vector<double> m_variance;
+    std::vector<double> m_alphaValues;
     double m_cumulativeEnergy = 0;
     double m_cumulativeEnergy2 = 0;
     double m_stepLength = 0;

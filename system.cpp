@@ -44,8 +44,7 @@ void System::runEquilibrationSteps(
 std::unique_ptr<class Sampler> System::runMetropolisSteps(
         double stepLength,
         unsigned int numberOfMetropolisSteps,
-        unsigned int MaxVariations,
-        double adjust)
+        unsigned int MaxVariations)
 {
     auto sampler = std::make_unique<Sampler>(
             m_numberOfParticles,
@@ -53,29 +52,28 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
             stepLength,
             numberOfMetropolisSteps);
     
-
-    for (unsigned int v = 0; v <= MaxVariations; v++){
-        for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
-            /* Call solver method to do a single Monte-Carlo step.
-            */
-            unsigned int numberOfAcceptedSteps = 0;
-            for (unsigned int j = 0; j < m_numberOfParticles; j++) {
-                for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
-                    bool acceptedStep = m_solver->step(stepLength, *m_waveFunction, m_particles, j, d);
-                    numberOfAcceptedSteps += acceptedStep;
-                }
+    double adjust = 0.02;
+    for (unsigned int m = 0; m <= MaxVariations; m++) {
+        sampler->storeAlphaValues(getWaveFunctionParameters().at(0));
+    for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
+        /* Call solver method to do a single Monte-Carlo step.
+        */
+        unsigned int numberOfAcceptedSteps = 0;
+        for (unsigned int j = 0; j < m_numberOfParticles; j++) {
+            for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
+                bool acceptedStep = m_solver->step(stepLength, *m_waveFunction, m_particles, j, d);
+                numberOfAcceptedSteps += acceptedStep;
             }
-            /* Here you should sample the energy (and maybe other things) using the
-            * sampler instance of the Sampler class.
-            */
-            sampler->sample(numberOfAcceptedSteps, this);
         }
-
-        sampler->computeAverages();
-        // double new_alpha =  m_waveFunction->getParameters()[-1] + 0.05;
-        m_waveFunction->adjustAlpha(adjust);
+        /* Here you should sample the energy (and maybe other things) using the
+        * sampler instance of the Sampler class.
+        */
+        sampler->sample(numberOfAcceptedSteps, this);
     }
 
+    sampler->computeAverages();
+    adjustAlpha(adjust);
+    }
     return sampler;
 }
 
@@ -89,4 +87,10 @@ const std::vector<double>& System::getWaveFunctionParameters()
 {
     // Helper function
     return m_waveFunction->getParameters();
+}
+
+void System::adjustAlpha(double adjust)
+{
+    // Helper function
+    m_waveFunction->adjustAlpha(adjust);
 }

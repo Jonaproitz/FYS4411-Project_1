@@ -19,11 +19,11 @@ public:
     std::unique_ptr<class Sampler> runMetropolisSteps(
             double stepLength,
             unsigned int numberOfMetropolisSteps,
-            unsigned int MaxVariations,
-            double adjust);
+            unsigned int MaxVariations);
 
     double computeLocalEnergy();
     const std::vector<double>& getWaveFunctionParameters();
+    void adjustAlpha(double adjust);
 
 private:
     unsigned int m_numberOfParticles = 0;
