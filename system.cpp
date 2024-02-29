@@ -55,16 +55,16 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
     double adjust = 0.02;
     for (unsigned int m = 0; m <= MaxVariations; m++) {
         sampler->storeAlphaValues(getWaveFunctionParameters().at(0));
-    for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
-        /* Call solver method to do a single Monte-Carlo step.
-        */
-        unsigned int numberOfAcceptedSteps = 0;
-        for (unsigned int j = 0; j < m_numberOfParticles; j++) {
-            for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
-                bool acceptedStep = m_solver->step(stepLength, *m_waveFunction, m_particles, j, d);
-                numberOfAcceptedSteps += acceptedStep;
+        for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
+            /* Call solver method to do a single Monte-Carlo step.
+            */
+            unsigned int numberOfAcceptedSteps = 0;
+            for (unsigned int j = 0; j < m_numberOfParticles; j++) {
+                for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
+                    bool acceptedStep = m_solver->step(stepLength, *m_waveFunction, m_particles, j, d);
+                    numberOfAcceptedSteps += acceptedStep;
+                }
             }
-        }
         /* Here you should sample the energy (and maybe other things) using the
         * sampler instance of the Sampler class.
         */
