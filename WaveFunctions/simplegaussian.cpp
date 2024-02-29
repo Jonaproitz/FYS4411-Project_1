@@ -34,7 +34,7 @@ double SimpleGaussian::evaluate(std::vector<std::unique_ptr<class Particle>>& pa
 double SimpleGaussian::evaluate1D(double x) {
     // Define the wavefunction for 1 dimension
     // This is used for optimization in the metroplis algo
-    double alpha = m_parameters.back();
+    double alpha = m_parameters.at(0);
     return exp(-alpha*(x*x));
 }
 
