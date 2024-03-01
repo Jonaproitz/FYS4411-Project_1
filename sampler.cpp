@@ -18,7 +18,7 @@ using std::endl;
 Sampler::Sampler(
         unsigned int numberOfParticles,
         unsigned int numberOfDimensions,
-        double stepLength,
+        double timestep,
         unsigned int numberOfMetropolisSteps)
 {
     m_stepNumber = 0;
@@ -27,7 +27,7 @@ Sampler::Sampler(
     m_numberOfDimensions = numberOfDimensions;
     m_cumulativeEnergy = 0;
     m_cumulativeEnergy2 = 0;
-    m_stepLength = stepLength;
+    m_stepLength = timestep;
     m_numberOfAcceptedSteps = 0;
 }
 

@@ -13,13 +13,11 @@ public:
             std::vector<std::unique_ptr<class Particle>> particles);
 
     void runEquilibrationSteps(
-            double stepLength,
-            unsigned int numberOfEquilibrationSteps,
-            double TimeStep);
+            double timestep,
+            unsigned int numberOfEquilibrationSteps);
 
     std::unique_ptr<class Sampler> runMetropolisSteps(
-            double stepLength,
-            double TimeStep,
+            double timestep,
             unsigned int numberOfMetropolisSteps,
             unsigned int MaxVariations);
 

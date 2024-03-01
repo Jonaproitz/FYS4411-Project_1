@@ -8,7 +8,7 @@
 
 
 std::vector<std::unique_ptr<Particle>> setupRandomUniformInitialState(
-            double stepLength,
+            double timestep,
             unsigned int numberOfDimensions,
             unsigned int numberOfParticles,
             Random& randomEngine

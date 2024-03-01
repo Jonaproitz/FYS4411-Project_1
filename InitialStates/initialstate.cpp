@@ -8,7 +8,7 @@
 
 
 std::vector<std::unique_ptr<Particle>> setupRandomUniformInitialState(
-            double stepLength,
+            double timestep,
             unsigned int numberOfDimensions,
             unsigned int numberOfParticles,
             Random& rng
@@ -23,7 +23,7 @@ std::vector<std::unique_ptr<Particle>> setupRandomUniformInitialState(
 
         for (unsigned int j=0; j < numberOfDimensions; j++) {
             double num = rng.nextDouble()-0.5;
-            position.push_back(num*stepLength);
+            position.push_back(num*sqrt(timestep));
         }
 
         particles.push_back(std::make_unique<Particle>(position));

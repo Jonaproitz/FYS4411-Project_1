@@ -27,14 +27,13 @@ System::System(
 
 
 void System::runEquilibrationSteps(
-        double stepLength,
-        unsigned int numberOfEquilibrationSteps,
-        double TimeStep)
+        double timeStep,
+        unsigned int numberOfEquilibrationSteps)
 {
     for (unsigned int i = 0; i < numberOfEquilibrationSteps; i++) {
         for (unsigned int j = 0; j < m_numberOfParticles; j++) {
             for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
-                m_solver->step(stepLength, *m_waveFunction, m_particles, j, d, TimeStep);
+                m_solver->step(timeStep, *m_waveFunction, m_particles, j, d);
             }
         }
     }
@@ -43,19 +42,17 @@ void System::runEquilibrationSteps(
 }
 
 std::unique_ptr<class Sampler> System::runMetropolisSteps(
-        double stepLength,
-        double TimeStep,
+        double timestep,
         unsigned int numberOfMetropolisSteps,
         unsigned int MaxVariations)
 {
     auto sampler = std::make_unique<Sampler>(
             m_numberOfParticles,
             m_numberOfDimensions,
-            stepLength,
+            timestep,
             numberOfMetropolisSteps);
-    
     // Set adjustment to alpha
-    double adjust = 0.02;
+    double adjust = 0.1;
     for (unsigned int m = 0; m <= MaxVariations; m++) {
         // Store alpha value
         sampler->storeAlphaValues(getWaveFunctionParameters().at(0));
@@ -64,7 +61,7 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
             for (unsigned int j = 0; j < m_numberOfParticles; j++) {
                 for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
                     // Call solver method to do a single Monte-Carlo step.
-                    bool acceptedStep = m_solver->step(stepLength, *m_waveFunction, m_particles, j, d, TimeStep);
+                    bool acceptedStep = m_solver->step(timestep, *m_waveFunction, m_particles, j, d);
                     numberOfAcceptedSteps += acceptedStep;
                 }
             }

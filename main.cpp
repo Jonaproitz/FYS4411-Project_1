@@ -22,20 +22,19 @@ int main() {
     // Initial setup for simulation
     unsigned int numberOfDimensions = 1;
     unsigned int numberOfParticles = 1;
-    unsigned int numberOfMetropolisSteps = (unsigned int) 1e4;
-    unsigned int numberOfEquilibrationSteps = (unsigned int) 1e0;
+    unsigned int numberOfMetropolisSteps = (unsigned int) 1e5;
+    unsigned int numberOfEquilibrationSteps = (unsigned int) 1e5;
     double omega = 1.0; // Oscillator frequency.
-    double alpha = 0.4; // Variational parameter.
-    double stepLength = 1; // Metropolis step length.
-    double TimeStep = 0.05;
+    double alpha = 0.2; // Variational parameter.
+    double timestep = 0.05; // Metropolis step length.
 
     // Set number of variations in alpha
-    unsigned int MaxVariations = 10;
+    unsigned int MaxVariations = 7;
 
     // The random engine can also be built without a seed
     auto rng = std::make_unique<Random>(seed);
     // Initialize particles
-    auto particles = setupRandomUniformInitialState(stepLength, numberOfDimensions, numberOfParticles, *rng);
+    auto particles = setupRandomUniformInitialState(timestep, numberOfDimensions, numberOfParticles, *rng);
     // Construct a unique pointer to a new System
     auto system = std::make_unique<System>(
             // Construct unique_ptr to Hamiltonian
@@ -49,14 +48,12 @@ int main() {
 
     // Run steps to equilibrate particles
     system->runEquilibrationSteps(
-            stepLength,
-            numberOfEquilibrationSteps,
-            TimeStep);
+            timestep,
+            numberOfEquilibrationSteps);
 
     // Run Metropolis algoritm
     auto sampler = system->runMetropolisSteps(
-            stepLength,
-            TimeStep,
+            timestep,
             numberOfMetropolisSteps,
             MaxVariations);
 

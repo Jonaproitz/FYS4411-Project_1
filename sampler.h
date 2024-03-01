@@ -7,7 +7,7 @@ public:
     Sampler(
         unsigned int numberOfParticles,
         unsigned int numberOfDimensions,
-        double stepLength,
+        double timestep,
         unsigned int numberOfMetropolisSteps);
 
 
