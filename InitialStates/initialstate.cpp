@@ -22,9 +22,8 @@ std::vector<std::unique_ptr<Particle>> setupRandomUniformInitialState(
         std::vector<double> position = std::vector<double>();
 
         for (unsigned int j=0; j < numberOfDimensions; j++) {
-            Random ran;
-            double num = ran.nextDouble()-0.5;
-            position.push_back(num);
+            double num = rng.nextDouble()-0.5;
+            position.push_back(num*stepLength);
         }
 
         particles.push_back(std::make_unique<Particle>(position));
