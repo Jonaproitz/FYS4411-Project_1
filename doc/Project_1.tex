@@ -28,23 +28,65 @@
     urlcolor={blue!80!black}}
 
 \newcommand{\txt}[1]{\text{#1}}
-\newcommand{\ddx}[1]{\frac{\partial #1}{\partial x}}
-\newcommand{\ddy}[1]{\frac{\partial #1}{\partial y}}
-\newcommand{\ddz}[1]{\frac{\partial #1}{\partial z}}
 \newcommand{\parder}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dder}[2]{\frac{\partial^2 #1}{\partial #2^2}}
 
 \begin{document}
 \vspace*{1.5cm}
-\title{\LARGE Title}
+\title{\LARGE Computational physics: Project 1}
 \author{Jon Aleksander Prøitz}
 \date{\today}
 \noaffiliation
 \maketitle
 
 \section*{\large Section 1}
-
-
-
+    The local energy is given by
+    \begin{equation}
+            E_L 
+        =   \frac{1}{\Psi_T}H\Psi_T
+    \end{equation}
+    with
+    \begin{equation}
+            H
+        =   \sum_i^N \left(\frac{-\hbar^2}{2m} \nabla_i^2 + V_\txt{ext}\right) + \sum_{i<j}^N V_\txt{int}
+    \end{equation}
+    \begin{equation}
+            V_{ext}(\mathbf{r}) 
+        =   \Bigg\{
+        \begin{array}{ll}
+            \frac{1}{2}m\omega_{ho}^2r^2 & (S)\\
+        \strut
+            \frac{1}{2}m[\omega_{ho}^2(x^2+y^2) + \omega_z^2z^2] & (E)
+        \label{trap_eqn}
+        \end{array}
+    \end{equation}
+    \begin{equation}
+        V_{int}(|\mathbf{r}_i-\mathbf{r}_j|) =  \Bigg\{
+        \begin{array}{ll}
+            \infty & {|\mathbf{r}_i-\mathbf{r}_j|} \leq {a}\\
+            0 & {|\mathbf{r}_i-\mathbf{r}_j|} > {a}
+        \end{array}
+    \end{equation}
+    \begin{equation}
+        \Psi_T(\mathbf{r})=\Psi_T(\mathbf{r}_1, \mathbf{r}_2, \dots \mathbf{r}_N,\alpha,\beta)
+        =\left[
+           \prod_i g(\alpha,\beta,\mathbf{r}_i)
+        \right]
+        \left[
+           \prod_{j<k}f(a,|\mathbf{r}_j-\mathbf{r}_k|)
+        \right],
+        \label{eq:trialwf}
+    \end{equation}
+    for $a=0$, $\beta = 1$, note that in 1D
+    \begin{equation}
+            \frac{1}{\Psi_T}\dder{\Psi_T}{x}
+        =   -2\alpha\frac{1}{\Psi_T}\parder{\Psi_T}{x}\left(x\Psi_T\right)
+        =   2\alpha{\left(2\alpha x^2 - 1\right)}
+    \end{equation}
+    \begin{equation}
+            \frac{1}{\Psi_T} \sum_{i=1}^d \dder{\Psi_T}{x_i}
+        =   2\alpha\left(2\alpha\sum_{i=1}x_i^2 - d\right)
+    \end{equation}
 
 
 
