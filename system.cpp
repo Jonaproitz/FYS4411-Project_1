@@ -28,12 +28,13 @@ System::System(
 
 void System::runEquilibrationSteps(
         double stepLength,
-        unsigned int numberOfEquilibrationSteps)
+        unsigned int numberOfEquilibrationSteps,
+        double TimeStep)
 {
     for (unsigned int i = 0; i < numberOfEquilibrationSteps; i++) {
         for (unsigned int j = 0; j < m_numberOfParticles; j++) {
             for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
-                m_solver->step(stepLength, *m_waveFunction, m_particles, 0 ,0);
+                m_solver->step(stepLength, *m_waveFunction, m_particles, j, d, TimeStep);
             }
         }
     }
@@ -43,6 +44,7 @@ void System::runEquilibrationSteps(
 
 std::unique_ptr<class Sampler> System::runMetropolisSteps(
         double stepLength,
+        double TimeStep,
         unsigned int numberOfMetropolisSteps,
         unsigned int MaxVariations)
 {
@@ -62,7 +64,7 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
             for (unsigned int j = 0; j < m_numberOfParticles; j++) {
                 for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
                     // Call solver method to do a single Monte-Carlo step.
-                    bool acceptedStep = m_solver->step(stepLength, *m_waveFunction, m_particles, j, d);
+                    bool acceptedStep = m_solver->step(stepLength, *m_waveFunction, m_particles, j, d, TimeStep);
                     numberOfAcceptedSteps += acceptedStep;
                 }
             }

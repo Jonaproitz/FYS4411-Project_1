@@ -14,10 +14,12 @@ public:
 
     void runEquilibrationSteps(
             double stepLength,
-            unsigned int numberOfEquilibrationSteps);
+            unsigned int numberOfEquilibrationSteps,
+            double TimeStep);
 
     std::unique_ptr<class Sampler> runMetropolisSteps(
             double stepLength,
+            double TimeStep,
             unsigned int numberOfMetropolisSteps,
             unsigned int MaxVariations);
 

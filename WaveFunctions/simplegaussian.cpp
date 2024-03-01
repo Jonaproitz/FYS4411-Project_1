@@ -38,6 +38,10 @@ double SimpleGaussian::evaluate1D(double x) {
     return exp(-alpha*(x*x));
 }
 
+double SimpleGaussian::quantumForce1D(double x) {
+    return -4*m_parameters.at(0)*x;
+}
+
 double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class Particle>>& particles) {
     // Compute the local kinetic part of the local derivative
     double alpha = m_parameters.at(0);

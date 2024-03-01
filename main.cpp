@@ -22,11 +22,12 @@ int main() {
     // Initial setup for simulation
     unsigned int numberOfDimensions = 1;
     unsigned int numberOfParticles = 1;
-    unsigned int numberOfMetropolisSteps = (unsigned int) 1e5;
-    unsigned int numberOfEquilibrationSteps = (unsigned int) 1e5;
+    unsigned int numberOfMetropolisSteps = (unsigned int) 1e4;
+    unsigned int numberOfEquilibrationSteps = (unsigned int) 1e0;
     double omega = 1.0; // Oscillator frequency.
     double alpha = 0.4; // Variational parameter.
     double stepLength = 1; // Metropolis step length.
+    double TimeStep = 0.05;
 
     // Set number of variations in alpha
     unsigned int MaxVariations = 10;
@@ -49,11 +50,13 @@ int main() {
     // Run steps to equilibrate particles
     system->runEquilibrationSteps(
             stepLength,
-            numberOfEquilibrationSteps);
+            numberOfEquilibrationSteps,
+            TimeStep);
 
     // Run Metropolis algoritm
     auto sampler = system->runMetropolisSteps(
             stepLength,
+            TimeStep,
             numberOfMetropolisSteps,
             MaxVariations);
 
