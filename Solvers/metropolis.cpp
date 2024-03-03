@@ -20,13 +20,12 @@ bool Metropolis::step(
         unsigned int particle_i,
         unsigned int dimension){
     double D = 0.5;
-    Random ran;
-    double sl = ran.nextGaussian(0, 1);
     double x = particles.at(particle_i)->getPosition().at(dimension);
     double wf_old = waveFunction.evaluate1D(x);
     double qf_old = waveFunction.quantumForce1D(x);
 
-    double x_new = x+sl*sqrt(timestep) + qf_old*timestep*D;
+    double sl = m_rng->nextGaussian(0, 1)*sqrt(timestep) + qf_old*timestep*D;
+    double x_new = x+sl;
     double wf_new = waveFunction.evaluate1D(x_new);
     double qf_new = waveFunction.quantumForce1D(x_new);
 
@@ -34,10 +33,10 @@ bool Metropolis::step(
     Greensfunction = exp(Greensfunction);
 
     double check = Greensfunction * wf_new*wf_new/(wf_old*wf_old);
-    bool a = ran.nextDouble()<=check;
+    bool a = m_rng->nextDouble()<=check;
 
     if (a == true)
-    {particles[particle_i]->adjustPosition(x_new-x, dimension);
+    {particles[particle_i]->adjustPosition(sl, dimension);
 }
     
     return a;
