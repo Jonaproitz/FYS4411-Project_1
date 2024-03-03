@@ -6,8 +6,6 @@
 #include "particle.h"
 #include "Math/random.h"
 
-#include <iostream>
-
 Metropolis::Metropolis(std::unique_ptr<class Random> rng)
     : MonteCarlo(std::move(rng)){
 }
