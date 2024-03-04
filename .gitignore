@@ -273,3 +273,5 @@ MakeFile
 *.fls
 *.synctex.gz
 *.pdf
+
+*.txt
