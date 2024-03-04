@@ -51,8 +51,8 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
             m_numberOfDimensions,
             timestep,
             numberOfMetropolisSteps);
-    // Set adjustment to alpha
-    double adjust = 0.1;
+
+    double eta = 0.05;
     for (unsigned int m = 0; m <= MaxVariations; m++) {
         // Store alpha value
         sampler->storeAlphaValues(getWaveFunctionParameters().at(0));
@@ -71,7 +71,9 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
     }
 
     sampler->computeAverages();
-    adjustAlpha(adjust);
+
+    double adjust = -eta*sampler->getEnergyDer();
+    m_waveFunction->adjustAlpha(adjust);
     }
     return sampler;
 }
@@ -88,8 +90,8 @@ const std::vector<double>& System::getWaveFunctionParameters()
     return m_waveFunction->getParameters();
 }
 
-void System::adjustAlpha(double adjust)
+double System::wfDerivative()
 {
     // Helper function
-    m_waveFunction->adjustAlpha(adjust);
+    return m_waveFunction->wfDerivative(m_particles);
 }

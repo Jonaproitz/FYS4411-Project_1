@@ -23,7 +23,7 @@ public:
 
     double computeLocalEnergy();
     const std::vector<double>& getWaveFunctionParameters();
-    void adjustAlpha(double adjust);
+    double wfDerivative();
 
 private:
     unsigned int m_numberOfParticles = 0;

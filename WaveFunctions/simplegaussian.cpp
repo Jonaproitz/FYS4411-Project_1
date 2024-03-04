@@ -42,6 +42,19 @@ double SimpleGaussian::quantumForce1D(double x) {
     return -4*m_parameters.at(0)*x;
 }
 
+double SimpleGaussian::wfDerivative(std::vector<std::unique_ptr<class Particle>>& particles) {
+    double WFder = 0;
+    double p = particles.size();
+    double d = particles.at(0)->getPosition().size();
+    for (unsigned int i = 0; i < p; i++){
+        for (unsigned int j = 0; j < d; j++) {
+            double x = particles.at(i)->getPosition().at(j);
+            WFder += -x*x;
+        }
+    }
+    return WFder;
+}
+
 double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class Particle>>& particles) {
     // Compute the local kinetic part of the local derivative
     double alpha = m_parameters.at(0);

@@ -13,6 +13,7 @@ public:
     virtual double evaluate(std::vector<std::unique_ptr<class Particle>>& particles) = 0;
     virtual double evaluate1D(double x) = 0;
     virtual double quantumForce1D(double x) = 0;
+    virtual double wfDerivative(std::vector<std::unique_ptr<class Particle>>& particles) = 0;
     virtual double computeDoubleDerivative(std::vector<std::unique_ptr<class Particle>>& particles) = 0;
     virtual void adjustAlpha(double adjust) = 0;
 

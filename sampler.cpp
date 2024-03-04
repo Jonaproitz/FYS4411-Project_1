@@ -27,6 +27,9 @@ Sampler::Sampler(
     m_numberOfDimensions = numberOfDimensions;
     m_cumulativeEnergy = 0;
     m_cumulativeEnergy2 = 0;
+    m_DerivativePsiE = 0;
+    m_DeltaPsi = 0;
+    m_EnergyDer = 0;
     m_stepLength = timestep;
     m_numberOfAcceptedSteps = 0;
 }
@@ -36,6 +39,11 @@ void Sampler::sample(unsigned int acceptedStep, System* system) {
     auto localEnergy = system->computeLocalEnergy();
     m_cumulativeEnergy  += localEnergy;
     m_cumulativeEnergy2  += localEnergy*localEnergy;
+
+    auto WFder = system->wfDerivative();
+    m_DeltaPsi += WFder;
+    m_DerivativePsiE += WFder*localEnergy;
+
     m_stepNumber++;
     m_numberOfAcceptedSteps += acceptedStep;
 }
@@ -76,7 +84,12 @@ void Sampler::computeAverages() {
     double m_energy2 = m_cumulativeEnergy2 / m_numberOfMetropolisSteps;
     m_variance.push_back(m_energy2 - m_energy.back()*m_energy.back());
 
-    // Reset cumulative energies for next run
+    m_EnergyDer = 2*(m_DerivativePsiE-m_DeltaPsi*m_energy.back())/m_numberOfMetropolisSteps;
+
+    // Reset cumulative properties for next run
     m_cumulativeEnergy = 0;
     m_cumulativeEnergy2 = 0;
+
+    m_DerivativePsiE = 0;
+    m_DeltaPsi = 0;
 }
