@@ -13,6 +13,7 @@ public:
 
     void sample(unsigned int acceptedStep, class System* system);
     void printOutputToTerminal(class System& system);
+    void printOutputToFile();
     void computeAverages();
     double getEnergy() { return m_energy.back(); }
     double getVariance() {return m_variance.back(); }

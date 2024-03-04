@@ -60,5 +60,8 @@ int main() {
     // Output information from the simulation to terminal
     sampler->printOutputToTerminal(*system);
 
+    // Output information to file
+    sampler->printOutputToFile();
+
     return 0;
 }
