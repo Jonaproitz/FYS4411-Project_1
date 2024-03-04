@@ -25,6 +25,5 @@ double HarmonicOscillator::computeLocalEnergy(
             r2 += x*x;
         }
     }
-    //double x = particles[0]->getPosition()[0];
     return 0.5*(-waveFunction.computeDoubleDerivative(particles) + m_omega*m_omega*r2);
 }
