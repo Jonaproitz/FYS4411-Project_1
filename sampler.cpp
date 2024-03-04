@@ -70,6 +70,20 @@ void Sampler::printOutputToTerminal(System& system) {
     }
 }
 
+void Sampler::printOutputToFile() {
+    const char separator    = ' ';
+    const int nameWidth     = 16;
+    std::ofstream myfile;
+    myfile.open("ExpectationValues.txt");
+    for (unsigned int i=0; i<m_energy.size(); i++){
+        myfile << std::left << std::setw(nameWidth) << std::setfill(separator) << m_alphaValues.at(i);
+        myfile << std::left << std::setw(nameWidth) << std::setfill(separator) << m_energy.at(i);
+        myfile << std::left << std::setw(nameWidth) << std::setfill(separator) << m_variance.at(i);
+        myfile << endl;
+    }
+    myfile.close();
+}
+
 void Sampler::computeAverages() {
     // Compute the averages of the sampled quantities.
     m_energy.push_back(m_cumulativeEnergy / m_numberOfMetropolisSteps);
