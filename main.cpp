@@ -22,14 +22,14 @@ int main() {
     // Initial setup for simulation
     unsigned int numberOfDimensions = 1;
     unsigned int numberOfParticles = 1;
-    unsigned int numberOfMetropolisSteps = (unsigned int) 1e5;
+    unsigned int numberOfMetropolisSteps = (unsigned int) 1e6;
     unsigned int numberOfEquilibrationSteps = (unsigned int) 1e5;
     double omega = 1.0; // Oscillator frequency.
-    double alpha = 0.4; // Variational parameter.
+    double alpha = 0.2; // Variational parameter.
     double stepLength = 1; // Metropolis step length.
 
     // Set number of variations in alpha
-    unsigned int MaxVariations = 10;
+    unsigned int MaxVariations = 70;
 
     // The random engine can also be built without a seed
     auto rng = std::make_unique<Random>(seed);
@@ -59,6 +59,7 @@ int main() {
 
     // Output information from the simulation to terminal
     sampler->printOutputToTerminal(*system);
+    sampler->printOutputToFile();
 
     return 0;
 }

@@ -53,7 +53,7 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
             numberOfMetropolisSteps);
     
     // Set adjustment to alpha
-    double adjust = 0.02;
+    double adjust = 0.01;
     for (unsigned int m = 0; m <= MaxVariations; m++) {
         // Store alpha value
         sampler->storeAlphaValues(getWaveFunctionParameters().at(0));
