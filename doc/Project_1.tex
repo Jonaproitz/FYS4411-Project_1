@@ -39,7 +39,42 @@
 \noaffiliation
 \maketitle
 
-\section*{\large Section 1}
+\section*{\large Describe the problem}
+    \textbf{*ADD MOTIVATION}
+
+    The goal of this project is to evaluate the ground state energy of a trapped, hard sphere Bose gas for different number of particles, using a specific trial wavefunction.
+
+    We have used the Variational Monte Carlo method, starting with non-interacting particles in a spherical trap to check numerical data against analytical results.
+    
+    The trial wavefunction is used to study the sensitivity of condensate and non-condensate properties to the hard sphere radius and the number of particles.
+
+    We start out with a simple Variational Monte Carlo method using the Metroplis algorithm.
+    Then go on to add importance sampling.
+    Using the gradient descent optimization to find the best variables.
+    Analyze our results with the blocking and bootstrap techniques.
+    Then move on to describe a repuslive two-body interaction.
+
+\section*{\large algorithms}
+    Starting out we use a Variational Monte Carlo method with the Metroplis algorithm with a spherical trap, only varying the $\alpha$ parameter of the trial wavefunction.
+    We move a single particle in a single dimension at a time, with a probability of moving the particle equal the value of the trail wavefunction at the new position squared divided by the trial wavefunction at the old position squared.
+    After all particles in all dimensions has gone through a single step in this algorithm the energy of the system is sampled and when all steps are completed the mean energy is calculated.
+    The mean energy is then stored and the algorithm repeats with a new value of $\alpha$.
+
+    The system is initialized with random positions in a uniform distribution between $-\frac{1}{2}s$ and $\frac{1}{2}s$ where $s$ is the step length used in the Metroplis algorithm and then run through $10^5$ equilibration steps using the above Metrpolis algorithm.
+
+
+    Moving on we add importance sampling with a quantum force, based on the Fokker-Planck and the Langevin equations to the algorithm.
+    This adds an "incentive" for the particles to move towards areas where the values of the trial wavefunction are higher.
+    The change in position of the particles in a Metroplis step is altered to include the quantum force and a Greensfunction is added to the probability that a particle moves.
+
+    Next up we add a gradient descent optimization to the algorithm.
+    When sampling the energy after each Metroplis step we now also sample the gradient of the wavefunction, using this to find the derivative of the energy which is then used for finding the next value of $\alpha$.
+    This ensures that the values of alpha always moves away from values far away from the minimum value.
+
+    \textbf{*NEXT UP IS THE STATISTICAL ANALYSIS}
+    
+
+\section*{\large Solutions: Problem A}
     The local energy is given by
     \begin{equation}
             E_L 
