@@ -16,10 +16,13 @@ public:
             double timestep,
             unsigned int numberOfEquilibrationSteps);
 
+    void energyDerivative(
+            double timestep,
+            unsigned int numberOfMetrpolisSteps);
+
     std::unique_ptr<class Sampler> runMetropolisSteps(
             double timestep,
-            unsigned int numberOfMetropolisSteps,
-            unsigned int MaxVariations);
+            unsigned int numberOfMetropolisSteps);
 
     double computeLocalEnergy();
     const std::vector<double>& getWaveFunctionParameters();

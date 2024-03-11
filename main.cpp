@@ -25,11 +25,8 @@ int main() {
     unsigned int numberOfMetropolisSteps = (unsigned int) 1e4;
     unsigned int numberOfEquilibrationSteps = (unsigned int) 1e5;
     double omega = 1.0; // Oscillator frequency.
-    double alpha = 0.2; // Variational parameter.
+    double alpha = 0.4; // Variational parameter.
     double timestep = 0.05; // Metropolis step length.
-
-    // Set number of variations in alpha
-    unsigned int MaxVariations = 120;
 
     // The random engine can also be built without a seed
     auto rng = std::make_unique<Random>(seed);
@@ -51,17 +48,20 @@ int main() {
             timestep,
             numberOfEquilibrationSteps);
 
+    system->energyDerivative(
+            timestep,
+            numberOfMetropolisSteps);
+
+    numberOfMetropolisSteps = 1<<19;
+
     // Run Metropolis algoritm
     auto sampler = system->runMetropolisSteps(
             timestep,
-            numberOfMetropolisSteps,
-            MaxVariations);
+            numberOfMetropolisSteps);
 
     // Output information from the simulation to terminal
     sampler->printOutputToTerminal(*system);
 
-    // Output information to file
-    sampler->printOutputToFile();
 
     return 0;
 }

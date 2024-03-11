@@ -15,10 +15,8 @@ public:
     void printOutputToTerminal(class System& system);
     void printOutputToFile();
     void computeAverages();
-    double getEnergy() { return m_energy.back(); }
-    double getVariance() {return m_variance.back(); }
-    double getEnergyDer() {return m_EnergyDer; }
-    void storeAlphaValues(double a) {m_alphaValues.push_back(a);}
+    double getEnergy() { return m_energy; }
+    double getVariance() {return m_variance; }
 
 private:
     unsigned int m_stepNumber = 0;
@@ -26,12 +24,8 @@ private:
     unsigned int m_numberOfParticles = 0;
     unsigned int m_numberOfDimensions = 0;
     unsigned int m_numberOfAcceptedSteps = 0;
-    std::vector<double> m_energy;
-    std::vector<double> m_variance;
-    std::vector<double> m_alphaValues;
-    double m_DerivativePsiE;
-    double m_DeltaPsi;
-    double m_EnergyDer;
+    double m_energy = 0;
+    double m_variance = 0;
     double m_cumulativeEnergy = 0;
     double m_cumulativeEnergy2 = 0;
     double m_stepLength = 0;

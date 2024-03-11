@@ -27,9 +27,6 @@ Sampler::Sampler(
     m_numberOfDimensions = numberOfDimensions;
     m_cumulativeEnergy = 0;
     m_cumulativeEnergy2 = 0;
-    m_DerivativePsiE = 0;
-    m_DeltaPsi = 0;
-    m_EnergyDer = 0;
     m_stepLength = timestep;
     m_numberOfAcceptedSteps = 0;
 }
@@ -39,10 +36,6 @@ void Sampler::sample(unsigned int acceptedStep, System* system) {
     auto localEnergy = system->computeLocalEnergy();
     m_cumulativeEnergy  += localEnergy;
     m_cumulativeEnergy2  += localEnergy*localEnergy;
-
-    auto WFder = system->wfDerivative();
-    m_DeltaPsi += WFder;
-    m_DerivativePsiE += WFder*localEnergy;
 
     m_stepNumber++;
     m_numberOfAcceptedSteps += acceptedStep;
@@ -58,7 +51,7 @@ void Sampler::printOutputToTerminal(System& system) {
     cout << " Number of dimensions : " << m_numberOfDimensions << endl;
     cout << " Number of Metropolis steps run : 10^" << std::log10(m_numberOfMetropolisSteps) << endl;
     cout << " Step length used : " << m_stepLength << endl;
-    cout << " Ratio of accepted steps: " << ((double) m_numberOfAcceptedSteps) / ((double) m_numberOfMetropolisSteps*m_numberOfParticles*m_numberOfDimensions*m_energy.size()) << endl;
+    cout << " Ratio of accepted steps: " << ((double) m_numberOfAcceptedSteps) / ((double) m_numberOfMetropolisSteps*m_numberOfParticles*m_numberOfDimensions) << endl;
     cout << endl;
     cout << "  -- Wave function parameters -- " << endl;
     cout << " Number of parameters : " << p << endl;
@@ -66,44 +59,24 @@ void Sampler::printOutputToTerminal(System& system) {
     cout << "  -- Results --  " << endl;
     const char separator    = ' ';
     const int nameWidth     = 16;
-    cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "Alpha values";
+    cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "Alpha value";
     cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "Energies";
     cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "Variance";
     cout << endl;
-    for (unsigned int i=0; i<m_energy.size(); i++){
-        cout << std::left << std::setw(nameWidth) << std::setfill(separator) << m_alphaValues.at(i);
-        cout << std::left << std::setw(nameWidth) << std::setfill(separator) << m_energy.at(i);
-        cout << std::left << std::setw(nameWidth) << std::setfill(separator) << m_variance.at(i);
-        cout << endl;
-    }
-}
-
-void Sampler::printOutputToFile() {
-    const char separator    = ' ';
-    const int nameWidth     = 16;
-    std::ofstream myfile;
-    myfile.open("ExpectationValues.txt");
-    for (unsigned int i=0; i<m_energy.size(); i++){
-        myfile << std::left << std::setw(nameWidth) << std::setfill(separator) << m_alphaValues.at(i);
-        myfile << std::left << std::setw(nameWidth) << std::setfill(separator) << m_energy.at(i);
-        myfile << std::left << std::setw(nameWidth) << std::setfill(separator) << m_variance.at(i);
-        myfile << endl;
-    }
-    myfile.close();
+    cout << std::left << std::setw(nameWidth) << std::setfill(separator) << pa.at(0);
+    cout << std::left << std::setw(nameWidth) << std::setfill(separator) << m_energy;
+    cout << std::left << std::setw(nameWidth) << std::setfill(separator) << m_variance;
+    cout << endl;
+    
 }
 
 void Sampler::computeAverages() {
     // Compute the averages of the sampled quantities.
-    m_energy.push_back(m_cumulativeEnergy / m_numberOfMetropolisSteps);
+    m_energy = m_cumulativeEnergy / m_numberOfMetropolisSteps;
     double m_energy2 = m_cumulativeEnergy2 / m_numberOfMetropolisSteps;
-    m_variance.push_back(m_energy2 - m_energy.back()*m_energy.back());
-
-    m_EnergyDer = 2*(m_DerivativePsiE-m_DeltaPsi*m_energy.back())/m_numberOfMetropolisSteps;
+    m_variance = m_energy2 - m_energy*m_energy;
 
     // Reset cumulative properties for next run
     m_cumulativeEnergy = 0;
     m_cumulativeEnergy2 = 0;
-
-    m_DerivativePsiE = 0;
-    m_DeltaPsi = 0;
 }
