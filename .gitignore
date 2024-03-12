@@ -276,5 +276,6 @@ MakeFile
 
 # Generated txt files
 *.txt
+*.dat
 
 doc/figures
