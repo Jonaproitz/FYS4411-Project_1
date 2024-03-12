@@ -106,7 +106,7 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
         
         // Sample the energy
         sampler->sample(numberOfAcceptedSteps, this);
-        myfile << sampler->getCumulativeEnergy()/(i+1) << std::endl;
+        if (i%2<<10 == 0) {myfile << sampler->getCumulativeEnergy()/(i+1) << std::endl;}
     }
 
     myfile.close();
