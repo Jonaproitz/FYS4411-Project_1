@@ -25,7 +25,7 @@ int main() {
     unsigned int numberOfMetropolisSteps = (unsigned int) 1e4;
     unsigned int numberOfEquilibrationSteps = (unsigned int) 1e5;
     double omega = 1.0; // Oscillator frequency.
-    double alpha = 0.4; // Variational parameter.
+    double alpha = 0.2; // Variational parameter.
     double timestep = 0.05; // Metropolis step length.
 
     // The random engine can also be built without a seed

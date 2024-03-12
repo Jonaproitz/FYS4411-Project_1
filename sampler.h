@@ -17,6 +17,7 @@ public:
     void computeAverages();
     double getEnergy() { return m_energy; }
     double getVariance() {return m_variance; }
+    double getCumulativeEnergy() {return m_cumulativeEnergy; }
 
 private:
     unsigned int m_stepNumber = 0;

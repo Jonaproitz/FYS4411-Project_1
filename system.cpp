@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <cassert>
+#include <fstream>
 
 #include "system.h"
 #include "sampler.h"
@@ -89,6 +90,9 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
             m_numberOfDimensions,
             timestep,
             numberOfMetropolisSteps);
+    
+    std::ofstream myfile;
+    myfile.open("Energies.dat");
 
     for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
         unsigned int numberOfAcceptedSteps = 0;
@@ -102,8 +106,10 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
         
         // Sample the energy
         sampler->sample(numberOfAcceptedSteps, this);
+        myfile << sampler->getCumulativeEnergy()/(i+1) << std::endl;
     }
 
+    myfile.close();
     sampler->computeAverages();
 
     return sampler;
