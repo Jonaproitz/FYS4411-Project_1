@@ -93,6 +93,7 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
     
     std::ofstream myfile;
     myfile.open("Energies.dat");
+    unsigned int writestep = 2<<10;
 
     for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
         unsigned int numberOfAcceptedSteps = 0;
@@ -106,7 +107,7 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
         
         // Sample the energy
         sampler->sample(numberOfAcceptedSteps, this);
-        if (i%2<<10 == 0) {myfile << sampler->getCumulativeEnergy()/(i+1) << std::endl;}
+        if (i%writestep == 0) {myfile << sampler->getCumulativeEnergy()/(i+1) << std::endl;}
     }
 
     myfile.close();
