@@ -48,7 +48,7 @@ void System::energyDerivative(
 {
 
     double energy = 0, deltaPsi = 0, derivativePsi = 0, energyDer = 0;
-    double eta = 0.05, etol = 1e-4;
+    double eta = 0.01, etol = 1e-4;
     unsigned int MaxVariations = 1000;
         for (unsigned int iter=0; iter<MaxVariations; iter++) {
             for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
