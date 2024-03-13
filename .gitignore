@@ -273,7 +273,6 @@ MakeFile
 *.fls
 *.synctex.gz
 *.pdf
-*.tex
 
 # Generated txt files
 *.txt
