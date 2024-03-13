@@ -39,7 +39,7 @@
 \noaffiliation
 \maketitle
 
-\section*{\large Describe the problem}
+\section*{\large Introduction}
     Theoritical studies of Bose-Einstein condensates in gases consisting of alkili atoms confined in magnetic or optical traps are often based off of the Gross-Pitaevskii equation. 
     Note that validity of these studies are dependent on the condition that the system is dilute, or in other words that the average distance between atoms is much larger than the range of the inter-atomic interactions. 
     Thus interactions of the system is largely dominated by two-body collisons wich are well described by the s-wave scattering length $a$.
@@ -55,8 +55,8 @@
     Our numerical studies start out with a simple Variational Monte Carlo method using the Metroplis algorithm to test the validity of our numerical data.
     We will then go on to add importance sampling based on the Fokker-Planck and Langevin equations, before adding a stochastic gradient descent algorithm to find optimal values of the trial wavefunction parameter $\alpha$.
     The result are then analyzed with the blocking technique.
+    Finally we can then paralleize our program and start tackling the repulsive two-body problem.
 
-    Then move on to describe a repuslive two-body interaction.
 
 \section*{\large algorithms}
     Starting out we use a Variational Monte Carlo method with the Metroplis algorithm with a spherical trap, only varying the $\alpha$ parameter of the trial wavefunction.
