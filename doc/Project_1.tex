@@ -33,32 +33,36 @@
 
 \begin{document}
 \vspace*{1.5cm}
-\title{\LARGE Computational physics: Project 1}
+\title{\LARGE Computational physics II: Project 1}
 \author{Jon Aleksander Prøitz}
 \date{\today}
 \noaffiliation
 \maketitle
 
 \section*{\large Describe the problem}
-    \textbf{*ADD MOTIVATION}
+    Theoritical studies of Bose-Einstein condensates in gases consisting of alkili atoms confined in magnetic or optical traps are often based off of the Gross-Pitaevskii equation. 
+    Note that validity of these studies are dependent on the condition that the system is dilute, or in other words that the average distance between atoms is much larger than the range of the inter-atomic interactions. 
+    Thus interactions of the system is largely dominated by two-body collisons wich are well described by the s-wave scattering length $a$.
+    When defining the diluteness of a gas an important aspect is the gas parameter $x(r) = n(r)a^3$, where $n(r)$ is the local density of the system, and for low values of the average gas parameter $x_{av} = 10^{-3}$ the mean field Gross-Pitaevskii equation works excidingly well.
+    Yet it has bin shown experimentally that the local gas paramet can exceed this value by tuning the scattering length in the pressence of a Feshbach resonance.
+    Thus improved many-body methods like Monte-Carlo calculations may be required.
 
-    The goal of this project is to evaluate the ground state energy of a trapped, hard sphere Bose gas for different number of particles, using a specific trial wavefunction.
 
+    The goal of this project is to evaluate the ground state energy of a trapped, hard sphere Bose gas for different number of particles, using a specific trial wavefunction $\Psi_T$.
     We have used the Variational Monte Carlo method, starting with non-interacting particles in a spherical trap to check numerical data against analytical results.
-    
     The trial wavefunction is used to study the sensitivity of condensate and non-condensate properties to the hard sphere radius and the number of particles.
 
-    We start out with a simple Variational Monte Carlo method using the Metroplis algorithm.
-    Then go on to add importance sampling.
-    Using the gradient descent optimization to find the best variables.
-    Analyze our results with the blocking and bootstrap techniques.
+    Our numerical studies start out with a simple Variational Monte Carlo method using the Metroplis algorithm to test the validity of our numerical data.
+    We will then go on to add importance sampling based on the Fokker-Planck and Langevin equations, before adding a stochastic gradient descent algorithm to find optimal values of the trial wavefunction parameter $\alpha$.
+    The result are then analyzed with the blocking technique.
+
     Then move on to describe a repuslive two-body interaction.
 
 \section*{\large algorithms}
     Starting out we use a Variational Monte Carlo method with the Metroplis algorithm with a spherical trap, only varying the $\alpha$ parameter of the trial wavefunction.
     We move a single particle in a single dimension at a time, with a probability of moving the particle equal the value of the trail wavefunction at the new position squared divided by the trial wavefunction at the old position squared.
     After all particles in all dimensions has gone through a single step in this algorithm the energy of the system is sampled and when all steps are completed the mean energy is calculated.
-    The mean energy is then stored and the algorithm repeats with a new value of $\alpha$.
+    The mean energy is then stored and the algorithm can repeat with a new value of $\alpha$.
 
     The system is initialized with random positions in a uniform distribution between $-\frac{1}{2}s$ and $\frac{1}{2}s$ where $s$ is the step length used in the Metroplis algorithm and then run through $10^5$ equilibration steps using the above Metrpolis algorithm.
 
