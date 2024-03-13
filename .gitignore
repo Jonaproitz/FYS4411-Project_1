@@ -273,6 +273,8 @@ MakeFile
 *.fls
 *.synctex.gz
 *.pdf
+*.tex
 doc/figures
 
 *.txt
+*.dat
