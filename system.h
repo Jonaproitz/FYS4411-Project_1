@@ -16,7 +16,7 @@ public:
             double timestep,
             unsigned int numberOfEquilibrationSteps);
 
-    void energyDerivative(
+    void optimizeParameters(
             double timestep,
             unsigned int numberOfMetrpolisSteps);
 

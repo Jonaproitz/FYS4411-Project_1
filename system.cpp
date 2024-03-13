@@ -42,7 +42,7 @@ void System::runEquilibrationSteps(
     return;
 }
 
-void System::energyDerivative(
+void System::optimizeParameters(
         double timestep,
         unsigned int numberOfMetropolisSteps)
 {

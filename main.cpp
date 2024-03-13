@@ -48,7 +48,7 @@ int main() {
             timestep,
             numberOfEquilibrationSteps);
 
-    system->energyDerivative(
+    system->optimizeParameters(
             timestep,
             numberOfMetropolisSteps);
 
