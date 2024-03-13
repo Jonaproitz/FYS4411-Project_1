@@ -58,6 +58,91 @@
     Finally we can then paralleize our program and start tackling the repulsive two-body problem.
 
 
+\section*{\large Analytic expressions}
+    We represent our system with a spherical (S), or elliptical (E) trap, given by
+    \begin{equation}
+            V_{ext}(\mathbf{r}) 
+        =   \Bigg\{
+        \begin{array}{ll}
+            \frac{1}{2}m\omega_{ho}^2r^2 & (S)\\
+        \strut
+            \frac{1}{2}m[\omega_{ho}^2(x^2+y^2) + \omega_z^2z^2] & (E)
+        \label{eq: trap_eqn}
+        \end{array}
+    \end{equation}
+    where $\omega_{ho}$ defines the trap potential, and
+    \begin{equation}
+            H
+        =   \sum_i^N \left(\frac{-\hbar^2}{2m} \nabla_i^2 + V_\txt{ext}\right) + \sum_{i<j}^N V_\txt{int}
+    \end{equation}
+    is the two-body Hamiltonian.
+    The inter-boson interaction is represented by a pairwise repuslive potential
+    \begin{equation}
+        V_{int}(|\mathbf{r}_i-\mathbf{r}_j|) =  \Bigg\{
+        \begin{array}{ll}
+            \infty & {|\mathbf{r}_i-\mathbf{r}_j|} \leq {a}\\
+            0 & {|\mathbf{r}_i-\mathbf{r}_j|} > {a}
+        \end{array}
+    \end{equation}
+    where $a$ is the hard-core diameter of the bosons.
+    The trial wavefunction for the ground state with $N$ atoms is given by
+    \begin{equation}
+        \Psi_T(\mathbf{r})=\Psi_T(\mathbf{r}_1, \mathbf{r}_2, \dots \mathbf{r}_N,\alpha,\beta)
+        =\left[
+           \prod_i g(\alpha,\beta,\mathbf{r}_i)
+        \right]
+        \left[
+           \prod_{j<k}f(a,|\mathbf{r}_j-\mathbf{r}_k|)
+        \right],
+        \label{eq: trialwf}
+    \end{equation}
+    with 
+    \begin{equation}
+            g(\alpha, \beta, \mathbf{r}_i)
+        =   exp\left[-\alpha\left(x_i^2+y_i^2+\beta z_i^2\right)\right]
+    \end{equation}
+    and
+    \begin{equation}
+            f(a,|\mathbf{r}_i-\mathbf{r}_j|)=\Bigg\{
+        \begin{array}{ll}
+            0 & {|\mathbf{r}_i-\mathbf{r}_j|} \leq {a}\\
+            (1-\frac{a}{|\mathbf{r}_i-\mathbf{r}_j|}) & {|\mathbf{r}_i-\mathbf{r}_j|} > {a}.
+        \end{array}
+    \end{equation}
+    For non-interacting bosons we set $a=0$ in a spherical potential, $\beta=1$, the trial wavefunction can be written
+    \begin{equation}
+            \Psi_T(\mathbf{r})
+        =   e^{-\alpha (x^2 + y^2 + z^2)}
+    \end{equation}
+    such that the local energy in one dimension
+    \begin{equation}
+            E_L 
+        =   \frac{1}{\Psi_T}H\Psi_T
+        =   \frac{1}{\Psi_T}\dder{\Psi_T}{x}
+        =   -2\alpha\frac{1}{\Psi_T}\parder{\Psi_T}{x}\left(x\Psi_T\right)
+        =   2\alpha{\left(2\alpha x^2 - 1\right)}
+    \end{equation}
+    Due to the symmetric properties of the trial wavefunction we note that with $\nabla^2 = \sum_{i=1}\dder{}{x_i}$
+    \begin{equation}
+            \frac{1}{\Psi_T} \sum_{i=1}^d \dder{\Psi_T}{x_i}
+        =   2\alpha\left(2\alpha\sum_{i=1}^dx_i^2 - d\right)
+        =   2\alpha\left(2\alpha r^2 - d\right)
+    \end{equation}
+    where $d$ is the number of dimensions. Hence
+    \begin{equation}
+            E_L
+        =   \sum_i^N\left(\frac{-\hbar^2}{2m}2\alpha\left(2\alpha r_i^2 - d\right) + \frac{1}{2}m\omega_{ho}^2r_i^2\right)
+        =   \sum_i^N\frac{d}{2}\hbar\omega_{ho}
+        =   \frac{Nd}{2}\hbar\omega_{ho}
+    \end{equation}
+    with $\alpha = 1/2a_{ho}^2$ and $a_{ho} = \sqrt{\hbar/m\omega_{ho}}$
+    \begin{equation}
+            \mathbf{F}
+        =   \frac{2\nabla \Psi_T}{\Psi_T}
+        =   -4\alpha \sum_{i=1}^d x_i \hat{\mathbf{x}_i}
+    \end{equation}
+
+
 \section*{\large algorithms}
     Starting out we use a Variational Monte Carlo method with the Metroplis algorithm with a spherical trap, only varying the $\alpha$ parameter of the trial wavefunction.
     We move a single particle in a single dimension at a time, with a probability of moving the particle equal the value of the trail wavefunction at the new position squared divided by the trial wavefunction at the old position squared.
