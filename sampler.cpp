@@ -75,8 +75,4 @@ void Sampler::computeAverages() {
     m_energy = m_cumulativeEnergy / m_numberOfMetropolisSteps;
     double m_energy2 = m_cumulativeEnergy2 / m_numberOfMetropolisSteps;
     m_variance = m_energy2 - m_energy*m_energy;
-
-    // Reset cumulative properties for next run
-    m_cumulativeEnergy = 0;
-    m_cumulativeEnergy2 = 0;
 }
