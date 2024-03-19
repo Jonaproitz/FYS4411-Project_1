@@ -3,6 +3,8 @@
 #include <cassert>
 #include <fstream>
 
+#include "/opt/homebrew/opt/libomp/include/omp.h"
+
 #include "system.h"
 #include "sampler.h"
 #include "particle.h"
@@ -84,14 +86,17 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
         double timestep,
         unsigned int numberOfMetropolisSteps)
 {
+    unsigned int numberOfThreads = 4;
     auto sampler = std::make_unique<Sampler>(
             m_numberOfParticles,
             m_numberOfDimensions,
             timestep,
-            numberOfMetropolisSteps);
+            numberOfMetropolisSteps*numberOfThreads);
     
     std::ofstream myfile;
     myfile.open("Energies.dat");
+    #pragma omp parallel num_threads(numberOfThreads)
+    {
     unsigned int writestep = 2<<10;
     unsigned int numberOfAcceptedSteps;
     for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
@@ -103,8 +108,13 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
                 numberOfAcceptedSteps += acceptedStep;
             }
         }
+        
+        #pragma omp critical 
+        {
         sampler->sample(numberOfAcceptedSteps, this);
-        if (i%writestep == 0) {myfile << sampler->getCumulativeEnergy()/(i+1) << std::endl;}
+        if (i%writestep == 0) {myfile << sampler->getCumulativeEnergy()/(i+1)/numberOfThreads << std::endl;}
+        }
+        }
     }
 
     myfile.close();
