@@ -20,8 +20,8 @@ int main() {
     int seed = 2024;
 
     // Initial setup for simulation
-    unsigned int numberOfDimensions = 1;
-    unsigned int numberOfParticles = 1;
+    unsigned int numberOfDimensions = 3;
+    unsigned int numberOfParticles = 4;
     unsigned int numberOfMetropolisSteps = (unsigned int) 1e4;
     unsigned int numberOfEquilibrationSteps = (unsigned int) 1e5;
     double omega = 1.0; // Oscillator frequency.

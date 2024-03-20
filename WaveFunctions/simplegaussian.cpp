@@ -11,10 +11,13 @@
 // Define parameters of the wavefunction
 SimpleGaussian::SimpleGaussian(double alpha)
 {
+    double beta = 2.82843;
     assert(alpha >= 0);
+    assert(beta >= 0);
     m_numberOfParameters = 1;
     m_parameters.reserve(1);
     m_parameters.push_back(alpha);
+    m_parameters.push_back(beta);
 }
 
 double SimpleGaussian::evaluate(std::vector<std::unique_ptr<class Particle>>& particles) {
@@ -25,17 +28,17 @@ double SimpleGaussian::evaluate(std::vector<std::unique_ptr<class Particle>>& pa
     for (unsigned int i = 0; i < p; i++){
         for (unsigned int j = 0; j < d; j++) {
             double x = particles.at(i)->getPosition().at(j);
-            E *= evaluate1D(x);
+            E *= evaluate1D(x, j);
         }
     }
     return E;
 }
 
-double SimpleGaussian::evaluate1D(double x) {
+double SimpleGaussian::evaluate1D(double x, unsigned int dimension) {
     // Define the wavefunction for 1 dimension
     // This is used for optimization in the metroplis algo
-    double alpha = m_parameters.at(0);
-    return exp(-alpha*(x*x));
+    if (dimension == 2) {return exp(-m_parameters.at(0)*(m_parameters.at(1)*m_parameters.at(1)*x*x));}
+    return exp(-m_parameters.at(0)*(x*x));
 }
 
 double SimpleGaussian::quantumForce1D(double x) {
