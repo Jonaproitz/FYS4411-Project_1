@@ -14,8 +14,8 @@ SimpleGaussian::SimpleGaussian(double alpha)
     double beta = 2.82843;
     assert(alpha >= 0);
     assert(beta >= 0);
-    m_numberOfParameters = 1;
-    m_parameters.reserve(1);
+    m_numberOfParameters = 2;
+    m_parameters.reserve(2);
     m_parameters.push_back(alpha);
     m_parameters.push_back(beta);
 }
@@ -37,7 +37,7 @@ double SimpleGaussian::evaluate(std::vector<std::unique_ptr<class Particle>>& pa
 double SimpleGaussian::evaluate1D(double x, unsigned int dimension) {
     // Define the wavefunction for 1 dimension
     // This is used for optimization in the metroplis algo
-    if (dimension == 2) {return exp(-m_parameters.at(0)*(m_parameters.at(1)*m_parameters.at(1)*x*x));}
+    if (dimension == 2) {return exp(-m_parameters.at(0)*(m_parameters.at(1)*x*x));}
     return exp(-m_parameters.at(0)*(x*x));
 }
 
