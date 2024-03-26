@@ -21,9 +21,11 @@ double HarmonicOscillator::computeLocalEnergy(
     double r2 = 0;
     for (unsigned int i = 0; i < particles.size(); i++) {
         std::vector<double> r = particles[i]->getPosition();
-        for (double x:r){
-            r2 += x*x;
+        for (unsigned int di = 0; di < r.size(); di++){
+            double x = r.at(di);
+            if (di == 2) {r2 += waveFunction.getParameters().at(1)*x*x;}
+            else {r2 += x*x;}
         }
     }
-    return 0.5*(-waveFunction.computeDoubleDerivative(particles) + m_omega*m_omega*r2);
+    return 0.5*(-waveFunction.computeDoubleDerivative(particles) + r2);
 }
