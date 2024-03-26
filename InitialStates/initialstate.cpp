@@ -22,7 +22,7 @@ std::vector<std::unique_ptr<Particle>> setupRandomUniformInitialState(
         std::vector<double> position = std::vector<double>();
 
         for (unsigned int j=0; j < numberOfDimensions; j++) {
-            double num = rng.nextDouble()-0.5;
+            double num = rng.nextGaussian(0, 1);
             position.push_back(num*sqrt(timestep));
         }
 
