@@ -74,7 +74,6 @@ void System::optimizeParameters(
         energyDer = 2*(derivativePsi-deltaPsi*energy);
         double adjust = -energyDer/(100*(iter/10 + 1));
         m_waveFunction->adjustAlpha(adjust);
-        std::cout << m_waveFunction->getParameters().at(0) << " " << energyDer << std::endl;
         if (abs(energyDer) < etol) {
             std::cout << "iter = " << iter + 1 << std::endl;
             std::cout << "energyDer = " << energyDer << std::endl;
