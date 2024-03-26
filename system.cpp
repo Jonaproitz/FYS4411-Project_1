@@ -48,11 +48,11 @@ void System::optimizeParameters(
         double timestep,
         unsigned int numberOfMetropolisSteps)
 {
-
-    double energy = 0, deltaPsi = 0, derivativePsi = 0, energyDer = 0;
-    double eta = 0.01, etol = 1e-4;
+    
+    double etol = 1e-2;
     unsigned int MaxVariations = 1000;
     for (unsigned int iter=0; iter<MaxVariations; iter++) {
+        double energy = 0, deltaPsi = 0, derivativePsi = 0, energyDer = 0;
         for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
             for (unsigned int j = 0; j < m_numberOfParticles; j++) {
                 for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
@@ -72,9 +72,10 @@ void System::optimizeParameters(
         deltaPsi /= numberOfMetropolisSteps;
         
         energyDer = 2*(derivativePsi-deltaPsi*energy);
-        double adjust = -eta*energyDer;
+        double adjust = -energyDer/(100*(iter/10 + 1));
         m_waveFunction->adjustAlpha(adjust);
-        if (abs(adjust) < etol) {
+        std::cout << m_waveFunction->getParameters().at(0) << " " << energyDer << std::endl;
+        if (abs(energyDer) < etol) {
             std::cout << "iter = " << iter + 1 << std::endl;
             std::cout << "energyDer = " << energyDer << std::endl;
             break;}   
