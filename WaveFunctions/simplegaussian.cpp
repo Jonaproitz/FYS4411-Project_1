@@ -65,8 +65,8 @@ double SimpleGaussian::reducedF(std::vector<std::unique_ptr<class Particle>>& pa
 
 double SimpleGaussian::quantumForce1D(std::vector<std::unique_ptr<class Particle>>& particles, unsigned int particle_i, double x, unsigned int dimension, double sl) {
     double beta, a = 0.0043;
-    if (dimension == 2) {beta = 1.0;}
-    else {beta = m_parameters.at(1);}
+    if (dimension == 2) {beta = m_parameters.at(1);}
+    else {beta = 1.0;}
 
     std::vector<double> rk = particles.at(particle_i)->getPosition();
     rk.at(dimension) += sl;
@@ -79,7 +79,7 @@ double SimpleGaussian::quantumForce1D(std::vector<std::unique_ptr<class Particle
                 double x = rk.at(di) - rj.at(di);
                 rkj2 += x*x;
             }
-            temp += (rk.at(dimension) - rj.at(dimension)) * a/(rkj2 * (1- a/sqrt(rkj2)));
+            temp += (rk.at(dimension) - rj.at(dimension)) * a/(sqrt(rkj2) * (1- a/sqrt(rkj2)));
         }
     }
 
@@ -91,8 +91,9 @@ double SimpleGaussian::wfDerivative(std::vector<std::unique_ptr<class Particle>>
     double p = particles.size();
     double d = particles.at(0)->getPosition().size();
     for (unsigned int i = 0; i < p; i++){
+        std::vector<double> ri = particles.at(i)->getPosition();
         for (unsigned int j = 0; j < d; j++) {
-            double x = particles.at(i)->getPosition().at(j);
+            double x = ri.at(j);
             if (j == 2) {WFder += -m_parameters.at(1)*x*x;}
             else {WFder += -x*x;}
         }
