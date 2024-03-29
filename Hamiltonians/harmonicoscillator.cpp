@@ -23,7 +23,7 @@ double HarmonicOscillator::computeLocalEnergy(
         std::vector<double> r = particles[i]->getPosition();
         for (unsigned int di = 0; di < r.size(); di++){
             double x = r.at(di);
-            if (di == 2) {r2 += waveFunction.getParameters().at(1)*x*x;}
+            if (di == 2) {r2 += waveFunction.getParameters().at(1)*waveFunction.getParameters().at(1)*x*x;}
             else {r2 += x*x;}
         }
     }
