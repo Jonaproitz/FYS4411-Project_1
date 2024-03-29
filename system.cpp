@@ -72,6 +72,7 @@ void System::optimizeParameters(
         deltaPsi /= numberOfMetropolisSteps;
         
         energyDer = 2*(derivativePsi-deltaPsi*energy);
+        std::cout << m_waveFunction->getParameters().at(0) << " " << energyDer << std::endl;
         double adjust = -energyDer/(100*(iter/10 + 1));
         m_waveFunction->adjustAlpha(adjust);
         if (abs(energyDer) < etol) {
@@ -97,7 +98,7 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
     myfile.open("Energies.dat");
     #pragma omp parallel num_threads(numberOfThreads)
     {
-    unsigned int writestep = 2<<10;
+    unsigned int writestep = 1;//2<<10;
     unsigned int numberOfAcceptedSteps;
     for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
         numberOfAcceptedSteps = 0;
