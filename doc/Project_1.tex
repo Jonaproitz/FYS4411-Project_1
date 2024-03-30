@@ -39,7 +39,7 @@
 \noaffiliation
 \maketitle
 
-\section*{\large Introduction}
+\section{\large Introduction}
     Theoritical studies of Bose-Einstein condensates in gases consisting of alkili atoms confined in magnetic or optical traps are often based off of the Gross-Pitaevskii equation. 
     Note that validity of these studies are dependent on the condition that the system is dilute, or in other words that the average distance between atoms is much larger than the range of the inter-atomic interactions. 
     Thus interactions of the system is largely dominated by two-body collisons wich are well described by the s-wave scattering length $a$.
@@ -57,8 +57,8 @@
     The result are then analyzed with the blocking technique.
     Finally we can then paralleize our program and start tackling the repulsive two-body problem.
 
-
-\section*{\large Analytic expressions}
+    
+\section{\large Analytic expressions}
     We represent our system with a spherical (S), or elliptical (E) trap, given by
     \begin{equation}
             V_{ext}(\mathbf{r}) 
@@ -76,6 +76,7 @@
     \begin{equation}
             H
         =   \sum_i^N \left(\frac{-\hbar^2}{2m} \nabla_i^2 + V_\txt{ext}\right) + \sum_{i<j}^N V_\txt{int}
+        \label{eq: Hamiltonian}
     \end{equation}
     with $N$ being the number of particles and the inter-boson interaction is represented by a pairwise repuslive potential
     \begin{equation}
@@ -244,7 +245,352 @@
                 + \sum_{l \neq k} u''(r_{ki}) + \frac{2}{r_{ki}}u'(r_{ki})
         \end{equation}
 
-\section*{\large algorithms}
+
+\section{\large Theory}
+    \subsection*{Quantum Monte Carlo}
+        We approach our system with a numerical Monte Carlo calculation.
+        Using the Metroplis algorithm.
+        In general for systems consisting of several particles, the integrals involved in the calculations of various expectation values are of a multi-dimensional characteristic.
+        Traditional methods such as Gauss-Legendre quadrature will not be suitable of our manybody system.
+
+        The Monte Carlo calculation tests a variety of different states averaging the expectation value of the system, relying on the variational principle to yield the lowest states with a given symmetry.
+        However in most cases, a wave function yields small values in large parts of configuration space, and a straightforward procedure which uses homogenously distributed random points in configuration space will most likely lead to poor results. 
+        Therefore we will aplly the Metropolis algorithm combined with an importance sampling to more efficiently obtaining the ground state energies.
+        This is done with the goal that the regions in configuration space where the wavefunction has higher values will be sampled more efficiently.
+
+        The basic procedure of a Variational Monte Carlo calculations consists thus of:
+        \begin{itemize}
+            \item Construct a trial wavefunction, for a manybody system consisting of $n$ particles lacated at postions $\mathbf{r = (\mathbf{r}_1,...,\mathbf{r}_2)}$. The trial wavefunction depends $m$ variational parameters $\mathbf{\alpha} = (\alpha_1,...,\alpha_m)$
+            \item Then we evaluate the expectation value of the Hamiltonian $H$
+            \item Thereafter we vary $\mathbf{\alpha}$ according to some minimazation algorithm and return to the first step if we are not satisfied with the results.
+        \end{itemize}
+        
+
+        In order to bring in the Monte Carlo machinery, we must define a probability density distribution (PDF). Using our ansatz for the trial wave function $\Psi(\mathbf{R}; \mathbf{\alpha})$ we define a trial PDF
+        \begin{equation}
+                P(\mathbf{r})
+            =   \frac{\abs*{\Psi(\mathbf{r}; \mathbf{\alpha})}^2}{\int \abs*{\Psi(\mathbf{r}; \mathbf{\alpha})}^2 d\mathbf{r}}
+        \end{equation}
+        This is our model for probability distribution function. The approximation to the expectation value of the Hamiltonian is now
+        \begin{equation}
+                \bar{E}[\mathbf{\alpha}]
+            =   \frac{\int d\mathbf{r}\Psi_T^*(\mathbf{r};\mathbf{\alpha})H(\mathbf{r})\Psi_T(\mathbf{r};\mathbf{\alpha})}{\int d\mathbf{r} \Psi_T^*(\mathbf{R};\mathbf{\alpha})\Psi_T(\mathbf{R};\mathbf{\alpha})}
+        \end{equation}
+
+
+        We define a new quantity called the local energy
+        \begin{equation}
+                E_L(\mathbf{r};\mathbf{\alpha})
+            =   \frac{1}{\Psi_T(\mathbf{r};\mathbf{\alpha})}H\Psi_T(\mathbf{r};\mathbf{\alpha})
+        \end{equation}
+        which, together with our trial PDF gives
+        \begin{equation}
+                \bar{E}[\mathbf{\alpha}]
+            =   \int d\mathbf{r} P(\mathbf{r} E_L(\mathbf{r};\mathbf{\alpha}))
+            \approx
+                \frac{1}{N}\sum_{i=1}^N E_L(\mathbf{r};\mathbf{\alpha})
+        \end{equation}
+        where $N$ is the number of samples in the Monte Carlo calculation.
+        The expression on the right hand side stems from Bernoulli's law of large numbers, which states that in the limit $N \to \infty$, the sample mean approaches the true mean.
+
+        The Algorithm for performing a variational Monte Carlo calculations runs as this
+        \begin{itemize}
+            \item Initialisation: Fix the number of Monte Carlo steps. Choose an initial $\mathbf{r}$ and variational parameters $\alpha$ and calculate $\abs{\Psi_T^\alpha(\mathbf{r})}^2$
+            \item Initialise the energy and the variance and start the Monte Carlo calculation.
+            \begin{itemize}
+                \item Calculate a trial position $\mathbf{r}_p = \mathbf{r} + a \cdot step$ where $a$ is a random variable.
+                \item Metropolis algorithm to accept or reject this move $w = P(\mathbf{r}_p) / P(\mathbf{r})$
+                \item If the step is accepted, then we set $\mathbf{r} = \mathbf{r}_p$
+                \item Update averages
+            \end{itemize}
+            \item Finish and compute final averages
+        \end{itemize}
+        Observe that the jumping in space is governed by the variable step. 
+        This is often referred to as the brute-force sampling and is normally replaced by what is called importance sampling.
+
+    \subsection*{Importance sampling}
+        For a diffusion process characterized by a time-dependent probability density $P(x, t)$ in one dimension the Fokker-Planck equation is
+        \begin{equation}
+                \parder{P}{t}
+            =   D\parder{}{x}\left(\parder{}{x} - F\right)P(x, t)
+        \end{equation}
+        where $F$ is a drift term and $D$ is the diffusion coefficient.
+        The new position in coordinate space is given as the solutions of the Langevin equation using Euler's method, namely, we go from the Langevin equation
+        \begin{equation}
+                \parder{x(t)}{t}
+            =   DF(x(t)) + \eta
+        \end{equation}
+        with $\eta$ is a random variable, giving a new positiona
+        \begin{equation}
+                y
+            =   x + DF(x)\Delta t + \xi \sqrt{\Delta t}
+        \end{equation}
+        where $\xi$ is gaussian random variable, $\Delta t$ is the chosen time step and the quantity $D$ is equal to $1/2$ in atomic units.
+        Note that $\Delta t$ is viewed as a parameter. 
+        In general values of $\Delta t \in [0.001, 0.01]$ yield rather stable values of the ground state energy.
+
+        The process of isotropic diffusion characterized by a time-dependent probability density $P(x, t)$ approximately follows the Fokker-Planck equation given by
+        \begin{equation}
+            \parder{P}{t}
+            =   \sum_i D\parder{}{\mathbf{x}_i}\left(\parder{}{\mathbf{x}_i} - \mathbf{F}_i\right)P(x, t)
+        \end{equation}
+        where $\mathbf{F}_i$ is the $i$th component of the drift term caused by an external potential, and $D$ is the diffusion coefficient. 
+        The convergence to a stationary probability density can be obtained by setting the left hand side to zero such that the resulting equation will be satisfied if and only if all the terms of the sum are equal zero
+        \begin{equation}
+                \dder{P}{\mathbf{x}_i}
+            =   P\parder{}{\mathbf{x}_i}\mathbf{F}_i + \mathbf{F}_i\parder{}{\mathbf{x}_i}P
+        \end{equation}
+        The drift vector should be of the form $\mathbf{F} = g(\mathbf{x})\parder{P}{\mathbf{x}}$. wich then gives
+        \begin{equation}
+            \dder{P}{\mathbf{x}_i}
+            =   P\parder{g}{P}\left(\parder{P}{\mathbf{x}_i}\right)^2 + Pg\dder{P}{\mathbf{x}_i} + g\left(\parder{P}{\mathbf{x}_i}\right)^2
+        \end{equation}
+        The condition of stationary density means that the left hand side equals zero. 
+        Thus the terms containing first and second derivatives have to cancel each other. 
+        This is possible only when $g = 1/P$, wich yields
+        \begin{equation}
+                \mathbf{F}
+            =   2\frac{1}{\Psi_T}\nabla\Psi_T
+        \end{equation}
+        which is known as the quantum force. 
+        This term is responsible for "pushing" the random walker towards regions of the configuration space where the trial wave function has larger values. 
+        This increases the efficiency of the simulation in contrast to the brute force Metropolis algorithm where the walker has the same probability of moving in every direction.
+
+        The Fokker-Planck equation yields a transition probability given by the Green's function
+        \begin{equation}
+                G(y, x, \Delta t)
+            =   \frac{1}{(4\pi D\Delta t)^{3N/2}} \exp(-(y - x - D\Delta t F(x))^2 / 4D\Delta t)
+        \end{equation}
+        which in turn means that our brute force Metropolis algorithm
+        \begin{equation}
+                A(y, x)
+            =   \min(1, q(y, x))
+        \end{equation}
+        with $q(y, x) = \abs{\Psi_T(y)}^2/\abs{\Psi_T(x)}^2$ is now replaced by the Metropolis-Hastings algorithm
+        \begin{equation}
+                q(y, x)
+            =   \frac{G(x, y, \Delta t)\abs{\Psi_T(y)}^2}{G(x, y, \Delta t)\abs{\Psi_T(x)}^2}
+        \end{equation}
+
+        
+    \subsection*{Gradient descent}
+        In general when doing Monte CArlo calculations, we end up computing the expectation value of the energy in terms of some parameters $\alpha_0, \alpha_1,..., \alpha_n$ and search for a minimum in this multi-variable parameter space.
+        This leads to an energy minimization problem where we need the derivative of the energy as a function of the variational parameters.
+        To find the derivatives of the local energy expectation value as function of the variational parameters, we can use the chain rule and the hermiticity of the Hamiltonian.
+        Limiting ourself to one variable we then define
+        \begin{equation}
+                \bar{E}_\alpha
+            =   \derivative{E_L[\alpha]}{\alpha}
+        \end{equation}
+        as the derivative of the energy with respect to the variational parameter $\alpha$. 
+        We then  also define the derivative of the trial function with respect to the paramter $\alpha$
+        \begin{equation}
+                \bar{\Psi}_\alpha
+            =   \derivative{\Psi[\alpha]}{\alpha}
+        \end{equation}
+        The elements of the gradient of the local energy are then
+        \begin{equation}
+                \bar{E}_\alpha
+            =   2\left(\langle\frac{\bar{\Psi}_\alpha}{\Psi[\alpha]}E_L[\alpha]\rangle - \langle\frac{\bar{\Psi_\alpha}}{\Psi[\alpha]}\rangle\langle E_L[\alpha]\rangle\right)
+        \end{equation}
+
+        From a computational point of view this means that we need to compute the expectation values of
+        \begin{equation}
+            \langle \frac{\Psi_\alpha}{\Psi[\alpha]} E_L \rangle
+        \end{equation}
+        and
+        \begin{equation}
+            \langle\frac{\bar{\Psi_\alpha}}{\Psi[\alpha]}\rangle\langle E_L[\alpha]\rangle
+        \end{equation}
+
+
+        Let us quickly remind ourselves how we derive the above method.
+        Perhaps the most celebrated of all one-dimensional root-finding routines is Newton's method, also called the Newton-Raphson method. 
+        This method requires the evaluation of both the function $f$ and its derivative $f'$ at arbitrary points. 
+        If you can only calculate the derivative numerically and/or your function is not of the smooth type, we normally discourage the use of this method.
+
+
+        The Newton-Raphson formula consists geometrically of extending the tangent line at a current point until it crosses zero, then setting the next guess to the abscissa of that zero-crossing. The mathematics behind this method is rather simple. Employing a Taylor expansion for $x$ sufficiently close to the solution $s$, we have
+        \begin{equation}
+                f(s)
+            =   0
+            =   f(x) + (s - x)f'(x) + \frac{(s - x)^2}{2}f''(x) + ...
+        \end{equation}
+        For small enough values of the function and for well-behaved functions, the terms beyond linear are unimportant, hence we obtain
+        \begin{equation}
+                f(x) + (s - x)f'(x)
+            \approx
+                0
+        \end{equation}
+        yielding
+        \begin{equation}
+                s 
+            \approx
+                x - \frac{f(x)}{f'(x)}
+        \end{equation}
+        Having in mind an iterative procedure, it is natural to start iterating with
+        \begin{equation}
+                x_{n+1}
+            =   x_n - \frac{f(x_n)}{f'(x_n)}
+        \end{equation}
+        The above is Newton-Raphson's method. It has a simple geometric interpretation, namely $x_{n+1}$ is the point where the tangent from $(x_n, f(x_n))$ crosses the $x$-axis. 
+        Close to the solution, Newton-Raphson converges fast to the desired result. However, if we are far from a root, where the higher-order terms in the series are important, the Newton-Raphson formula can give grossly inaccurate results. 
+        For instance, the initial guess for the root might be so far from the true root as to let the search interval include a local maximum or minimum of the function. 
+        If an iteration places a trial guess near such a local extremum, so that the first derivative nearly vanishes, then Newton-Raphson may fail totally.
+
+
+        The basic idea of gradient descent is that a function $F(\mathbf{x}), \mathbf{x} \equiv (x_1, x_2, ..., x_n)$, decreases fastest if one goes from $\mathbf{x}$ in the direction of the negative gradient $-\nabla F(\mathbf{x})$.
+        It can be shown that if
+        \begin{equation}
+                \mathbf{x}_{k+1}
+            =   \mathbf{x}_k - \gamma_k\nabla F(\mathbf{x}_k)
+        \end{equation}
+        with $\gamma_k > 0$.
+        If $\gamma_k$ is sufficiently small, then $F(\mathbf{x}_{k+1}) \leq F(\mathbf{x}_k)$. 
+        This means that for a sufficiently small $\gamma_k$ we are always moving towards smaller function values, i.e a minimum.
+
+        The previous observation is the basis of the steepest descent method, which is also referred to as just the Gradient Descent method. 
+        Here we start with an initial guess $x_0$ for a minimum of $F$ and compute new approximations according to
+        \begin{equation}
+                \mathbf{x}_{k+1}
+            =   \mathbf{x}_k - \gamma_k\nabla F(\mathbf{x}_k), \txt{ } k \geq 0
+        \end{equation}
+        The parameter $\gamma_k$ is also often referred to as the step length or the learning rate within the context of Machine Learning.
+
+        Ideally the sequence $\{\mathbf{x}_k\}_{k=0}$ converges to a global minimum of the function $F$. 
+        However in general we do not know if we are in a global or local minimum of the function. 
+        In the special case when $F$ is a convex function, all local minima are also global minima, so in this case gradient descent can converge to the global solution. 
+        The advantage of this scheme is that it is conceptually simple and straightforward to implement.
+        However the method in this form has some severe limitations.
+
+        In machine learing we are often faced with non-convex high dimensional cost functions with many local minima. 
+        Since GD is deterministic we will get stuck in a local minimum, if the method converges, unless we have a very good intial guess. 
+        This also implies that the scheme is sensitive to the chosen initial condition.
+        Note that the gradient is a function of $\mathbf{x} = (x_1, ..., x_n)$ which makes it expensive to compute numerically.
+        The gradient descent method is also sensitive to the choice of learning rate $\gamma_k$. 
+        This stems the fact that we are only guaranteed that $F(\mathbf{x}_{k+1}) \leq F(\mathbf{x}_k)$ for sufficiently small values of $\gamma_k$.
+        The problem is to determine an optimal learning rate. 
+        If the learning rate is chosen too small the method will take a long time to converge and if it is too large we can experience erratic behavior.
+        Many of these shortcomings can be alleviated by introducing randomness. 
+        One such method is that of Stochastic Gradient Descent.
+
+    \subsection*{Resampling methods}
+        Resampling methods involve repeatedly drawing samples from a training set and refitting a model of interest on each sample such that we obtain additional information about the fitted model.
+        For example, in order to estimate the variability of a linear regression fit, we can repeatedly draw different samples from the training data, fit a linear regression to each new sample, and then examine the extent to which the resulting fits differ.
+        Such an approach may allow us to obtain information that would not be available from fitting the model only once using the original training sample.
+
+        Resampling methods are an important tool in modern statistics. 
+        However these approaches can be computationally expensive, because they involve fitting the same statistical method multiple times using different subsets of the training data. 
+        Yet, due to recent advances in computing power, the computational requirements of resampling methods generally are not prohibitive. 
+
+        Why use resampling methods:
+        \begin{itemize}
+            \item Our simulations can be treated as computer experiments. This is particularly the case for Monte Carlo methods
+            \item The results can be analysed with the same statistical tools as we would use analysing experimental data.
+            \item As in all experiments, we are looking for expectation values and an estimate of how accurate they are, i.e., possible sources for errors.
+        \end{itemize}
+
+        As in other experiments, many numerical experiments have two classes of errors:
+        \begin{itemize}
+            \item Statistical errors
+            \item Systematical errors
+        \end{itemize}
+        Statistical errors can be estimated using standard tools from statistics.
+        Systematical errors are method specific and must be treated differently from case to case.
+
+        In this project we will use the Blocking method.
+        This method was made popular by Flyvbjerg and Pedersen (1989) and has become one of the main ways to estimate $V(\hat{\theta})$ for exactly one $\hat{\theta}$, namely $\hat{\theta} = \bar{X}$.
+        Assume $n = 2^d$ where $d$ is an integer greater than $1$ and $X_1, X_2, ..., X_n$ is a stationary asymptotically uncorrelated time series.
+        Switching to vector notation by arranging $X_1, X_2, ..., X_n$ in an $n$-tuple, we can define
+        \begin{equation}
+                \hat{\mathbf{X}}
+            =   (X_1, X_2, ..., X_n)
+        \end{equation}
+
+        The strength of the blocking method is when the number of observations, $n$ is large. 
+        For instance for large $n$, the complexity of dependent bootstrapping scales poorly, but the blocking method does not, moreover, it becomes more accurate the larger $n$ is.
+
+        We can now define blocking transformations. 
+        The idea is to take the mean of subsequent pairs of elements from $\hat{\mathbf{X}}$ and form a new vector $\hat{\mathbf{X}}_1$.
+        Continuing in the same way by taking the mean of subsequent pairs of elements of $\hat{\mathbf{X}}_1$ we obtain $\hat{\mathbf{X}}_2$, and so on.
+        We then define $\hat{\mathbf{X}}_i$ by
+        \begin{equation}
+                (\hat{\mathbf{X}}_0)_k 
+            \equiv
+                (\hat{\mathbf{X}})_k
+        \end{equation}
+        \begin{equation}
+                (\hat{\mathbf{X}}_{i+1})_k
+            \equiv
+                \frac{1}{2}\left((\hat{\mathbf{X}}_i)_{2k-1} + (\hat{\mathbf{X}}_i)_{2k}\right)
+            \txt{  for all  }
+                1 \leq i \leq d - 1
+        \end{equation}
+        Where the quantity $\hat{\mathbf{X}}_k$ is subject to $k$ blocking transformations. 
+        We now have $d$ vectors $\hat{\mathbf{X}}_0, \hat{\mathbf{X}}_1, ..., \hat{\mathbf{X}}_{d-1}$ containing the subsequent averages of observations. 
+        It can then be shown that if the components of $\hat{\mathbf{X}}$ is a stationary time series, then the components of $\hat{\mathbf{X}}_i$ is also a stationary time series for all $i$ where $0 \leq i \leq d - 1$.
+        Thus we can compute the autocovariance, the variance, sample mean, and number of observations for each $i$.
+        Letting $\gamma_i$, $\sigma_i$ and $\bar{\mathbf{X}}_i$ denote the autocovariance, variance and average of the elements of $\hat{\mathbf{X}}_i$ and let $n_i$ be the number of elements of $\hat{\mathbf{X}}$.
+        It then follows by induction that $n_i = n/2^i$.
+
+        Using the definition of the blocking transformation and the distributive property of the covariance, it is clear that since $h = \abs{i - j}$ we can define
+        \begin{equation*}
+                \gamma_{k+1}(h)
+            =   cov((X_{k+1})_i, (X_{k+1})_i)
+        \end{equation*}
+        \begin{equation*}
+            =   \frac{1}{4} cov((X_k)_{2i-1} + (X_k)_{2i}, (X_k)_{2j-1} + (X_k)_{2j})
+        \end{equation*}
+        \begin{equation*}
+            =   \frac{1}{2}\gamma_k (2h) + \frac{1}{2}\gamma_k(2h+1)h = 0
+        \end{equation*}
+        \begin{equation*}
+            =   \frac{1}{4}\gamma_k(2h - 1) + \frac{1}{2}\gamma_k(2h) + \frac{1}{4}\gamma_k(2h + 1)
+            \txt{ else}
+        \end{equation*}
+        The quantity $\hat{\mathbf{X}}$ is asymptotically uncorrelated by assumption, $\hat{\mathbf{X}}_k$ is also asymptotically uncorrelated. 
+        
+        Let's turn our attention to the variance of the sample mean $V(\bar{X})$.
+        We have
+        \begin{equation}
+                V(\bar{X}_k)
+            =   \frac{\sigma_k^2}{n_k} + \frac{2}{n_k} \sum_{h=1}^{n_k - 1} \left(1 - \frac{h}{n_k}\right)\gamma_k(h)
+            =   \frac{\sigma_k^2}{n_k} + e_k 
+            \txt{ if }
+                \gamma_k(0)
+            =   \sigma_k^2
+        \end{equation}
+        Where $e_k$ is the truncation error:
+        \begin{equation}
+                e_k 
+            =   \frac{2}{n_k} \sum_{h=1}^{n_k - 1} \left(1 - \frac{h}{n_k}\right)\gamma_k(h)
+        \end{equation}
+        We can now show that $V(\bar{X}_i) = V(\bar{X}j)$ for all $0 \leq i \leq d - 1$ and $0 \leq j \leq d - 1$.
+
+        We can then wrap up
+        \begin{equation}
+                n_{j+1}\bar{X}_{j+1}
+            =   \sum_{i=1}^{n_j+1} (\hat{\mathbf{X}}_{j+1})_i
+            =   \frac{1}{2} \sum_{i=1}^{nj/2} (\hat{\mathbf{X}}_j)_{2i - 1} + (\hat{\mathbf{X}}_j)_{2i}
+            =   \frac{n_j}{2}\bar{X}_j
+            =   n_{j + 1} \bar{X}_j
+        \end{equation}
+        By repeated use of this equation we get $V(\bar{X}_i) = V(\bar{X}_0) = V(\bar{X})$ for all $0 \leq i \leq d - 1$.
+        This has the consequence that 
+        \begin{equation}
+                V(\bar{X})
+            =   \frac{\sigma_k^2}{n_k} + e_k 
+            \txt{ for all }
+                0 \leq k \leq d - 1
+        \end{equation}
+
+        Flyvbjerg and Petersen demonstrated that the sequence $\{e_k\}_{k=0}^{d-1}$ is decreasing, and conjecture that the term $e_k$ can be made as small as we would like by making $k$ sufficiently large. Thus we can apply blocking transformations until $e_k$ is sufficiently small, and then estimate $V(\bar{X})$ by $\hat{\sigma}_k^2 / n_k$.
+
+
+    \subsection*{Repuslive interaction}
+        
+
+\section{\large algorithms}
     Starting out we use a Variational Monte Carlo method with the Metroplis algorithm with a spherical trap, only varying the $\alpha$ parameter of the trial wavefunction.
     We move a single particle in a single dimension at a time, with a probability of moving the particle equal the value of the trail wavefunction at the new position squared divided by the trial wavefunction at the old position squared.
     After all particles in all dimensions has gone through a single step in this algorithm the energy of the system is sampled and when all steps are completed the mean energy is calculated.
@@ -263,10 +609,11 @@
 
     Making the program write out every $2^{10}$ step, we uitilize Marius Jonssons blocking algorithm to get the final energy with the following standard deviations.
 
-    \textbf{NEXT UP PARALLELIZATION!}
+    The system is parallized by running the main Metroplis algorithm four times independently.
+    Each thread then has access to the sampler class
 
     
-\section*{\large Test versus analytical results}
+\section{\large Test versus analytical results}
     Problem B: We note that the energy matches the analytical result for $\alpha = 0.5$ and that the variance is 0.
     This is expected from the analytical expression, where $\alpha = 1/2a_{ho}^2$ with $a_{ho} = 1$ in natural units.
     
