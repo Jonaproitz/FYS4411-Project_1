@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-filename = "Results/ExpectationValues_problem_b.txt"
+numberOfParticles = 1
+filename = f"Results/ExpectationValues_problem_b_{numberOfParticles}.txt"
 alpha, energy, variance = np.loadtxt(filename, unpack=True)
 
 plt.figure()
@@ -10,5 +11,5 @@ plt.plot(alpha, variance)
 plt.xlabel("$\\alpha$")
 plt.ylabel("Variance")
 plt.grid()
-plt.savefig("doc/figures/Varience_B.png")
+plt.savefig(f"doc/figures/Varience_B_{numberOfParticles}.png")
 plt.close()
