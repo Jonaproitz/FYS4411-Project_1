@@ -21,7 +21,7 @@ int main() {
 
     // Initial setup for simulation
     unsigned int numberOfDimensions = 3;
-    unsigned int numberOfParticles = 1;
+    unsigned int numberOfParticles = 100;
     unsigned int numberOfMetropolisSteps = (unsigned int) 1e5;
     unsigned int numberOfEquilibrationSteps = (unsigned int) 1e5;
     double omega = 1.0; // Oscillator frequency.
@@ -58,6 +58,7 @@ int main() {
             MaxVariations);
 
     // Output information from the simulation to terminal
+    sampler->printOutputToFile();
     sampler->printOutputToTerminal(*system);
 
     return 0;

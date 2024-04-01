@@ -16,7 +16,7 @@ public:
     void computeAverages();
     double getEnergy() { return m_energy.back(); }
     double getVariance() {return m_variance.back(); }
-    void printOutputToFile(class System& system);
+    void printOutputToFile();
     void storeAlphaValues(double a) {m_alphaValues.push_back(a);}
 
 private:
