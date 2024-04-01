@@ -70,11 +70,11 @@
         Therefore we will aplly the Metropolis algorithm combined with an importance sampling to more efficiently obtaining the ground state energies.
         This is done with the goal that the regions in configuration space where the wavefunction has higher values will be sampled more efficiently.
 
-        The basic procedure of a Variational Monte Carlo calculations consists thus of:
+        With this in mind the basic procedure of a Variational Monte Carlo calculations consists of:
         \begin{itemize}
-            \item Construct a trial wavefunction, for a manybody system consisting of $n$ particles lacated at postions $\mathbf{r = (\mathbf{r}_1,...,\mathbf{r}_2)}$. The trial wavefunction depends $m$ variational parameters $\mathbf{\alpha} = (\alpha_1,...,\alpha_m)$
-            \item Then we evaluate the expectation value of the Hamiltonian $H$
-            \item Thereafter we vary $\mathbf{\alpha}$ according to some minimazation algorithm and return to the first step if we are not satisfied with the results.
+            \item Constructing a trial wavefunction, for a manybody system consisting of $n$ particles lacated in postions $\mathbf{r = (\mathbf{r}_1,...,\mathbf{r}_2)}$. The trial wavefunction depends $m$ variational parameters $\mathbf{\alpha} = (\alpha_1,...,\alpha_m)$.
+            \item Evaluating the expectation value of the Hamiltonian $H$.
+            \item Vary $\mathbf{\alpha}$ according to some minimazation algorithm and return to the first step if we are not satisfied with the results.
         \end{itemize}
         
 
@@ -105,19 +105,19 @@
         where $N$ is the number of samples in the Monte Carlo calculation.
         The expression on the right hand side stems from Bernoulli's law of large numbers, which states that in the limit $N \to \infty$, the sample mean approaches the true mean.
 
-        The Algorithm for performing a variational Monte Carlo calculations runs as this
+        The Algorithm for performing a variational Monte Carlo calculation goes as:
         \begin{itemize}
-            \item Initialisation: Fix the number of Monte Carlo steps. Choose an initial $\mathbf{r}$ and variational parameters $\alpha$ and calculate $\abs{\Psi_T^\alpha(\mathbf{r})}^2$
+            \item Fix the number of Monte Carlo steps with an initial set of positions $\mathbf{r}$ and variational parameters $\alpha$, then calculate $\abs{\Psi_T^\alpha(\mathbf{r})}^2$
             \item Initialise the energy and the variance and start the Monte Carlo calculation.
             \begin{itemize}
                 \item Calculate a trial position $\mathbf{r}_p = \mathbf{r} + a \cdot step$ where $a$ is a random variable.
-                \item Metropolis algorithm to accept or reject this move $w = P(\mathbf{r}_p) / P(\mathbf{r})$
+                \item Metropolis algorithm to accept or reject this move, with a probalility of acceptance $w = P(\mathbf{r}_p) / P(\mathbf{r})$
                 \item If the step is accepted, then we set $\mathbf{r} = \mathbf{r}_p$
                 \item Update averages
             \end{itemize}
             \item Finish and compute final averages
         \end{itemize}
-        Observe that the jumping in space is governed by the variable step. 
+        Note that the jumping in space is governed by the variable step. 
         This is often referred to as the brute-force sampling and is normally replaced by what is called importance sampling.
 
     \subsection*{Importance sampling}
@@ -397,13 +397,10 @@
         \end{equation}
 
         Flyvbjerg and Petersen demonstrated that the sequence $\{e_k\}_{k=0}^{d-1}$ is decreasing, and conjecture that the term $e_k$ can be made as small as we would like by making $k$ sufficiently large. Thus we can apply blocking transformations until $e_k$ is sufficiently small, and then estimate $V(\bar{X})$ by $\hat{\sigma}_k^2 / n_k$.
-
-
-    \subsection*{Repuslive interaction}
         
 
 \section{\large Analytic expressions}
-    We represent our system with a spherical (S), or elliptical (E) trap, given by
+    We represent our system with either a spherical (S), or elliptical (E) trap, given by
     \begin{equation}
             V_{ext}(\mathbf{r}) 
         =   \Bigg\{
