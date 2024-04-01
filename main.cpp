@@ -20,7 +20,7 @@ int main() {
     int seed = 2024;
 
     // Initial setup for simulation
-    unsigned int numberOfDimensions = 1;
+    unsigned int numberOfDimensions = 3;
     unsigned int numberOfParticles = 1;
     unsigned int numberOfMetropolisSteps = (unsigned int) 1e5;
     unsigned int numberOfEquilibrationSteps = (unsigned int) 1e5;
@@ -29,7 +29,7 @@ int main() {
     double timestep = 0.05; // Metropolis step length.
 
     // Set number of variations in alpha
-    unsigned int MaxVariations = 7;
+    unsigned int MaxVariations = 35;
 
     // The random engine can also be built without a seed
     auto rng = std::make_unique<Random>(seed);
