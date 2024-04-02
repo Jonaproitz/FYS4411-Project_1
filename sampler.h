@@ -18,6 +18,7 @@ public:
     double getEnergy() { return m_energy; }
     double getVariance() {return m_variance; }
     double getCumulativeEnergy() {return m_cumulativeEnergy; }
+    double getStepNumber() {return m_stepNumber; }
 
 private:
     unsigned int m_stepNumber = 0;

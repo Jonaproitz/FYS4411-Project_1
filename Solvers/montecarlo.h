@@ -13,8 +13,7 @@ public:
             double timestep,
             class WaveFunction& waveFunction,
             std::vector<std::unique_ptr<class Particle>>& particles,
-            unsigned int particle_i,
-            unsigned int dimension) = 0;
+            unsigned int particle_i) = 0;
 
 protected:
     std::unique_ptr<class Random> m_rng;

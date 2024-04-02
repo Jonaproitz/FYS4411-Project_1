@@ -35,9 +35,7 @@ void System::runEquilibrationSteps(
 {
     for (unsigned int i = 0; i < numberOfEquilibrationSteps; i++) {
         for (unsigned int j = 0; j < m_numberOfParticles; j++) {
-            for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
-                m_solver->step(timeStep, *m_waveFunction, m_particles, j, d);
-            }
+            m_solver->step(timeStep, *m_waveFunction, m_particles, j);
         }
     }
 
@@ -49,16 +47,14 @@ void System::optimizeParameters(
         unsigned int numberOfMetropolisSteps)
 {
     
-    double etol = 1e-2;
-    unsigned int MaxVariations = 1000;
+    double etol = 1e-2, eta = 1e-2;
+    unsigned int MaxVariations = 20;
     for (unsigned int iter=0; iter<MaxVariations; iter++) {
         double energy = 0, deltaPsi = 0, derivativePsi = 0, energyDer = 0;
         for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
             for (unsigned int j = 0; j < m_numberOfParticles; j++) {
-                for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
-                    // Call solver method to do a single Monte-Carlo step.
-                    m_solver->step(timestep, *m_waveFunction, m_particles, j, d);
-                }
+                // Call solver method to do a single Monte-Carlo step.
+                m_solver->step(timestep, *m_waveFunction, m_particles, j);
             }
             auto localEnergy = computeLocalEnergy();
             energy += localEnergy;
@@ -73,12 +69,13 @@ void System::optimizeParameters(
         
         energyDer = 2*(derivativePsi-deltaPsi*energy);
         std::cout << m_waveFunction->getParameters().at(0) << " " << energyDer << std::endl;
-        double adjust = -energyDer/(100*(iter/10 + 1));
-        m_waveFunction->adjustAlpha(adjust);
+        
         if (abs(energyDer) < etol) {
             std::cout << "iter = " << iter + 1 << std::endl;
             std::cout << "energyDer = " << energyDer << std::endl;
             break;}   
+        double adjust = -energyDer*eta;
+        m_waveFunction->adjustAlpha(adjust);
     }
     std::cout << "minimal alpha: " << m_waveFunction->getParameters().at(0) << std::endl;
 }
@@ -95,25 +92,23 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
             numberOfMetropolisSteps*numberOfThreads);
     
     std::ofstream myfile;
-    myfile.open("Energies.dat");
+    myfile.open("Results/Energies_G_" + std::to_string(m_numberOfParticles) + ".dat");
     #pragma omp parallel num_threads(numberOfThreads)
     {
-    unsigned int writestep = 1;//2<<10;
+    unsigned int writestep = 1<<10;
     unsigned int numberOfAcceptedSteps;
     for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
         numberOfAcceptedSteps = 0;
         for (unsigned int j = 0; j < m_numberOfParticles; j++) {
-            for (unsigned int d = 0; d < m_numberOfDimensions; d++) {
-                // Call solver method to do a single Monte-Carlo step.
-                bool acceptedStep = m_solver->step(timestep, *m_waveFunction, m_particles, j, d);
-                numberOfAcceptedSteps += acceptedStep;
-            }
+            // Call solver method to do a single Monte-Carlo step.
+            bool acceptedStep = m_solver->step(timestep, *m_waveFunction, m_particles, j);
+            numberOfAcceptedSteps += acceptedStep;
         }
         
         #pragma omp critical 
         {
         sampler->sample(numberOfAcceptedSteps, this);
-        if (i%writestep == 0) {myfile << sampler->getCumulativeEnergy()/(i+1)/numberOfThreads << std::endl;}
+        if (i%writestep == 0) {myfile << sampler->getCumulativeEnergy()/sampler->getStepNumber() << std::endl;}
         }
         }
     }
