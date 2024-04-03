@@ -108,7 +108,7 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
         #pragma omp critical 
         {
         sampler->sample(numberOfAcceptedSteps, this);
-        if (i%writestep == 0) {myfile << sampler->getCumulativeEnergy()/sampler->getStepNumber() << std::endl;}
+        if (omp_get_thread_num() == 0 && i%writestep == 0) {myfile << sampler->getCumulativeEnergy()/sampler->getStepNumber() << std::endl;}
         }
         }
     }
