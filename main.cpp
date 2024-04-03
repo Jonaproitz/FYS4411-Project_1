@@ -22,10 +22,10 @@ int main() {
     // Initial setup for simulation
     unsigned int numberOfDimensions = 3;
     unsigned int numberOfParticles = 100;
-    unsigned int numberOfMetropolisSteps = (unsigned int) 1e4;
+    unsigned int numberOfMetropolisSteps = (unsigned int) 1e5;
     unsigned int numberOfEquilibrationSteps = (unsigned int) 1e5;
     double omega = 1.0; // Oscillator frequency.
-    double alpha = 0.9; // Variational parameter.
+    double alpha = 0.75; // Variational parameter.
     double timestep = 0.01; // Metropolis step length.
 
     // The random engine can also be built without a seed
@@ -60,7 +60,7 @@ int main() {
             numberOfMetropolisSteps);
 
     // Output information from the simulation to terminal
-    sampler->printOutputToTerminal(*system);
+    //sampler->printOutputToTerminal(*system);
 
 
     return 0;
