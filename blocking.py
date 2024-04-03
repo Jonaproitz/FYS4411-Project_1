@@ -1,13 +1,15 @@
 # Common imports
 import os
 
+numberOfParticles = 10
+
 # Where to save the figures and data files
-DATA_ID = ""#"Results/EnergyMin"
+DATA_ID = "Results/"
 
 def data_path(dat_id):
     return os.path.join(DATA_ID, dat_id)
 
-infile = open(data_path("Energies.dat"),'r')
+infile = open(data_path(f"Energies_G_{numberOfParticles}.dat"),'r')
 
 from numpy import log2, zeros, mean, var, sum, loadtxt, arange, array, cumsum, dot, transpose, diagonal, sqrt
 from numpy.linalg import inv
