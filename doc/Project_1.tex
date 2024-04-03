@@ -39,6 +39,10 @@
 \noaffiliation
 \maketitle
 
+Code used in the project can be found here:
+\url{https://github.com/Jonaproitz/FYS4411-Project_1/}.
+The code is logged in different branches coenciding with the problems in the project.
+
 \section{\large Introduction}
     Theoritical studies of Bose-Einstein condensates in gases consisting of alkili atoms confined in magnetic or optical traps are often based off of the Gross-Pitaevskii equation. 
     Note that validity of these studies are dependent on the condition that the system is dilute, or in other words that the average distance between atoms is much larger than the range of the inter-atomic interactions. 
@@ -479,6 +483,7 @@
             =   \sum_i^N\left(\frac{-\hbar^2}{2m}2\alpha\left(2\alpha r_i^2 - d\right) + \frac{1}{2}m\omega_{ho}^2r_i^2\right)
             =   \sum_i^N\frac{d}{2}\hbar\omega_{ho}
             =   \frac{Nd}{2}\hbar\omega_{ho}
+            \label{eq: localEnergy}
         \end{equation}
         using $\alpha = 1/2a_{ho}^2$ and $a_{ho} = \sqrt{\hbar/m\omega_{ho}}$ in the second calculation.
         We note that setting $\hbar=\omega_{ho}=m=1$ gives $\alpha=1/2$.
@@ -587,41 +592,107 @@
         \end{equation}
 
 
-\section{\large algorithms}
-    Starting out we use a Variational Monte Carlo method with the Metroplis algorithm with a spherical trap, only varying the $\alpha$ parameter of the trial wavefunction.
-    We move a single particle in a single dimension at a time, with a probability of moving the particle equal the value of the trail wavefunction at the new position squared divided by the trial wavefunction at the old position squared.
-    After all particles in all dimensions has gone through a single step in this algorithm the energy of the system is sampled and when all steps are completed the mean energy is calculated.
-    The mean energy is then stored and the algorithm can repeat with a new value of $\alpha$.
-
-    The system is initialized with random positions in a uniform distribution between $-\frac{1}{2}s$ and $\frac{1}{2}s$ where $s$ is the step length used in the Metroplis algorithm and then run through $10^5$ equilibration steps using the above Metrpolis algorithm.
-
-
-    Moving on we add importance sampling with a quantum force, based on the Fokker-Planck and the Langevin equations to the algorithm.
-    This adds an "incentive" for the particles to move towards areas where the values of the trial wavefunction are higher.
-    The change in position of the particles in a Metroplis step is altered to include the quantum force and a Greensfunction is added to the probability that a particle moves.
-
-    Next up we add a gradient descent optimization to the algorithm.
-    After each Metroplis step we calculate the gradient of the wavefunction and use this to find the derivative of the energy which is then used for updating the value of $\alpha$ closer to the minimum value.
-    This ensures that the values of alpha always moves away from values far away from the minimum value, and will move faster away from those values wich are further away from the minimum.
-
-    Making the program write out every $2^{10}$ step, we uitilize Marius Jonssons blocking algorithm to get the final energy with the following standard deviations.
-
-    The system is parallized by running the main Metroplis algorithm four times independently.
-    Each thread then has access to the sampler class
-
+\section{\large Numerical approach}
+    The starting point of our numerical calculatons is the Monte Carlo calculation desrcibed in section II.
+    To build the numerical structure of our program, we use the spherical trap described eq: \ref{eq: trap_eqn}.
+    With non-interacting bosons as our particle of choice.
+    The Metropolis algorithm is used on a single particle in a single dimension at a time and sampled once every particle in every dimension has undergone i single Monte Carlo step.
+    When all Monte Carlo steps are completed we calculate the mean energy and variance of the system for a given parameter $\alpha$ and redo the calculation with different values of $\alpha$ to get an understanding of how the system changes with this parameter.
     
-\section{\large Test versus analytical results}
-    Problem B: We note that the energy matches the analytical result for $\alpha = 0.5$ and that the variance is 0.
-    This is expected from the analytical expression, where $\alpha = 1/2a_{ho}^2$ with $a_{ho} = 1$ in natural units.
+    The calculations are run for $n = 1$, $n = 10$ and $n=100$, where $n$ denotes the number of particles, with the parameter $\alpha \in [0.2, 0.9]$.
+    The results of these calcualtions are shown in figures \ref{fig: B1}, \ref{fig: B10} and \ref{fig: B100}.
+    For non-interacting bosons, using natural units, we expect the to find the minimum energies for $\alpha = 0.5$.
+    This matches all three of our calculations, and we note that the variance for $alpha = 0.5$ is $0$ wich is also to be expected from eq \ref*{eq: localEnergy}.
+    \def\imwidth{0.49\textwidth}
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=\imwidth]{figures/Energy_B_1.png}
+        \includegraphics[width=\imwidth]{figures/Varience_B_1.png}
+        \caption{Calcluated energy and variance using the Monte Carlo calculations for different values of the parameter $\alpha$ for $1$ non-interacing boson in a spherical trap.}
+        \label{fig: B1}
+    \end{figure}
+
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=\imwidth]{figures/Energy_B_10.png}
+        \includegraphics[width=\imwidth]{figures/Varience_B_10.png}
+        \caption{Calcluated energy and variance using the Monte Carlo calculations for different values of the parameter $\alpha$ for $10$ non-interacing bosons in a spherical trap.}
+        \label{fig: B10}
+    \end{figure}
+
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=\imwidth]{figures/Energy_B_100.png}
+        \includegraphics[width=\imwidth]{figures/Varience_B_100.png}
+        \caption{Calcluated energy and variance using the Monte Carlo calculations for different values of the parameter $\alpha$ for $100$ non-interacing bosons in a spherical trap.}
+        \label{fig: B100}
+    \end{figure}\newpage
     
-    Problem C: We note the same results as in problem b, we simply need fewer metropolis steps.
 
-    Problem D: With the gradient descent algorithm we note that with a weight of $\eta = 0.01$ for one particle in one dimension we reach a alphavalue of $\alpha = 4.93966$ after 154 iterations. the change in alpha values at this point is below $0.0001$ and the algorithm stops.
-    For two particles in two dimensions we reach $\alpha = 0.498934$ after 57 iterations, again with the change in $\alpha$ being less than $0.0001$.
-    For three particles in three dimensions we reach $\alpha = 0.499258$ after 23 iterations.
+    The next goal is to implement importance sampling.
+    This is done using a quantum force based on the Fokker-Planck and Langevin equations.
+    In contrast to the brute force Monte Carlo calculation used previously, the importance sampling adds an "incentive" for the particles to move towards the areas where the trial wave function has greater values, as described in section II.
+    The implementation of importance sampling to our calculations allows us to more efficiently sample the areas in coordinate space where the trial wavefunction is greater.
+    Thus we aim to find the same ground state energies as with the brute force calculations but with fewer steps needed.
 
-    Problem E: Implementing the Blocking algorithm from Marius Jonssons program with the above values of alpha, run for $2^{19}$ metropolis steps we get standard deviations on the scale of $10^{-5}$ in all three cases.
+    The calculations are again run for $n = 1$, $n = 10$ and $n=100$ with the parameter $\alpha \in [0.2, 0.9]$.
+    With the new results shown in figures \ref{fig: C1}, \ref{fig: C10} and \ref{fig: C100}.
+    Comparing these to figures \ref{fig: B1}, \ref{fig: B10} and \ref{fig: B100} we note the great simularities and same over results from the brute force Monte Carlo calculations.
+    The mayor difference between the importance sampling and the brute force way is the time spent on these calculations, this is shown in table \ref{table: time spent}.
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=\imwidth]{figures/Energy_C_1.png}
+        \includegraphics[width=\imwidth]{figures/Varience_C_1.png}
+        \caption{Calcluated energy and variance using the Monte Carlo calculations with importance sampling for different values of the parameter $\alpha$ for $1$ non-interacing boson in a spherical trap.}
+        \label{fig: C1}
+    \end{figure}
 
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=\imwidth]{figures/Energy_C_10.png}
+        \includegraphics[width=\imwidth]{figures/Varience_C_10.png}
+        \caption{Calcluated energy and variance using the Monte Carlo calculations with importance sampling for different values of the parameter $\alpha$ for $10$ non-interacing bosons in a spherical trap.}
+        \label{fig: C10}
+    \end{figure}
+
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=\imwidth]{figures/Energy_C_100.png}
+        \includegraphics[width=\imwidth]{figures/Varience_C_100.png}
+        \caption{Calcluated energy and variance using the Monte Carlo calculations with importance sampling for different values of the parameter $\alpha$ for $100$ non-interacing bosons in a spherical trap.}
+        \label{fig: C100}
+    \end{figure}\newpage
+    
+    \begin{table}[!ht]
+        \begin{tabular}{|l|l|l|l|}
+        \hline
+                            & $n=1$         & $n=10$         & $n=100$         \\ \hline
+        Brute Force         & 29.43 seconds & 278.72 seconds & 2710.04 seconds \\ \hline
+        Importance sampling & 4.36 seconds  & 42.01 seconds  & 409.61 seconds  \\ \hline
+        \end{tabular}
+        \caption{CPU time for a Monte Carlo calcualtion, with both equilibration steps and the main algorithm for $n=1$, $n=10$ and $n=100$.}
+        \label{table: time spent}
+    \end{table}
+
+    In the previous calculations we simply plotted the expectation values of the energies as a function of the parameter $\alpha$.
+    For large systems this means that we spend equally many Monte Carlo cycles for values of $\alpha$ that are far away from the energy minimum.
+    To improve upon this we implement a steepest descent algorithm to minimize the energy and obtain the best possible value of $\alpha$.
+    This algorithm is tested with a weight of $\eta = 0.01$ for $n = 1$ in one dimension, $n = 2$ in two dimensions and $n = 3$ in three dimensions.
+    The algorithm is stopped if the approximation for the energy derivative is lower than $10^{-4}$.
+    For one particle in one dimension the algorithm reached $\alpha = 0.493966$ after 154 iterations.
+    For two particles in two dimension the algorithm reached $\alpha = 0.4938934$ after 57 iterations.
+    For three particles in three dimension the algorithm reached $\alpha = 0.499258$ after 23 iterations.
+
+    The code is parallized using OpenMP.
+    The main idea behind the parallizition is to run the calculations several times averaging over the results.
+
+    Lastly we implement the repulsive interaction between particles.
+    The trap used so far is converted to a elliptical one, described in eq \ref{eq: trap_eqn}.
+    For conveniance we slightly restructure our Metropolis function to move a single particle at a time, rather than a single particle in a single dimension.
+    This is done such that $f(a, \abs{r_i - r_j})$ can be calculated once rather than three times for each particle, in three dimensions. 
+
+
+\section{\large Results}
 
 
 
