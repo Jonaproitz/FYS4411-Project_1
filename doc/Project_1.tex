@@ -606,8 +606,8 @@ The code is logged in different branches coenciding with the problems in the pro
     \def\imwidth{0.49\textwidth}
     \begin{figure}[!ht]
         \centering
-        \includegraphics[width=\imwidth]{figures/Energy_B_1.png}
-        \includegraphics[width=\imwidth]{figures/Varience_B_1.png}
+        \includegraphics{figures/Energy_B_1.png}
+        %\includegraphics[width=\imwidth]{figures/Varience_B_1.png}
         \caption{Calcluated energy and variance using the Monte Carlo calculations for different values of the parameter $\alpha$ for $1$ non-interacing boson in a spherical trap.}
         \label{fig: B1}
     \end{figure}
@@ -683,10 +683,10 @@ The code is logged in different branches coenciding with the problems in the pro
     For two particles in two dimension the algorithm reached $\alpha = 0.4938934$ after 57 iterations.
     For three particles in three dimension the algorithm reached $\alpha = 0.499258$ after 23 iterations.
 
-    The code is parallized using OpenMP.
+    Now that it is clear the calculations give the expected results for the non-interacting case we can move on to paralleize the code using OpenMP.
     The main idea behind the parallizition is to run the calculations several times averaging over the results.
 
-    Lastly we implement the repulsive interaction between particles.
+    Then everything is ready for us to implement the repulsive interaction between particles.
     The trap used so far is converted to a elliptical one, described in eq \ref{eq: trap_eqn}.
     For conveniance we slightly restructure our Metropolis function to move a single particle at a time, rather than a single particle in a single dimension.
     This is done such that $f(a, \abs{r_i - r_j})$ can be calculated once rather than three times for each particle, in three dimensions. 
@@ -694,6 +694,7 @@ The code is logged in different branches coenciding with the problems in the pro
 
 \section{\large Results}
     For $\beta = \gamma = 2.82843$ the calculations with 10 particles gives us $\alpha = 6.88022$ and a ground state energy of $19.420763$ with a standard deviation of $0.026794$.
+    With 50 particles for $\alpha = 0.75$ we get a ground state energy of $95.779891$ with a standard deviation of $0.018782$.
 
 
 \end{document}
