@@ -21,9 +21,9 @@ int main() {
 
     // Initial setup for simulation
     unsigned int numberOfDimensions = 3;
-    unsigned int numberOfParticles = 100;
-    unsigned int numberOfMetropolisSteps = (unsigned int) 1e5;
-    unsigned int numberOfEquilibrationSteps = (unsigned int) 1e5;
+    unsigned int numberOfParticles = 50;
+    unsigned int numberOfMetropolisSteps = (unsigned int) 3e4;
+    unsigned int numberOfEquilibrationSteps = (unsigned int) 1e4;
     double omega = 1.0; // Oscillator frequency.
     double alpha = 0.75; // Variational parameter.
     double timestep = 0.01; // Metropolis step length.
@@ -48,11 +48,13 @@ int main() {
             timestep,
             numberOfEquilibrationSteps);
 
+    // Run parameter optimization
     system->optimizeParameters(
             timestep,
             numberOfMetropolisSteps);
 
-    numberOfMetropolisSteps = 1<<19;
+    // Set number of MC cycles for the main calculation
+    numberOfMetropolisSteps = 1<<15;
 
     // Run Metropolis algoritm
     auto sampler = system->runMetropolisSteps(
@@ -60,7 +62,7 @@ int main() {
             numberOfMetropolisSteps);
 
     // Output information from the simulation to terminal
-    //sampler->printOutputToTerminal(*system);
+    sampler->printOutputToTerminal(*system);
 
 
     return 0;

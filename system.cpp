@@ -13,6 +13,8 @@
 #include "InitialStates/initialstate.h"
 #include "Solvers/montecarlo.h"
 
+#include <iomanip>
+
 
 System::System(
         std::unique_ptr<class Hamiltonian> hamiltonian,
@@ -35,6 +37,7 @@ void System::runEquilibrationSteps(
 {
     for (unsigned int i = 0; i < numberOfEquilibrationSteps; i++) {
         for (unsigned int j = 0; j < m_numberOfParticles; j++) {
+            // Call the solver method to do a single Monte Carlo step for each particle
             m_solver->step(timeStep, *m_waveFunction, m_particles, j);
         }
     }
@@ -46,16 +49,18 @@ void System::optimizeParameters(
         double timestep,
         unsigned int numberOfMetropolisSteps)
 {
-    
-    double etol = 1e-2, eta = 1e-2;
+    // Set endpoint and weighting of optimization
+    double etol = 1e-2, eta = 1e-1 / m_numberOfParticles;
     unsigned int MaxVariations = 20;
     for (unsigned int iter=0; iter<MaxVariations; iter++) {
+        // Define properties used in optimization
         double energy = 0, deltaPsi = 0, derivativePsi = 0, energyDer = 0;
         for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
             for (unsigned int j = 0; j < m_numberOfParticles; j++) {
                 // Call solver method to do a single Monte-Carlo step.
                 m_solver->step(timestep, *m_waveFunction, m_particles, j);
             }
+            // Sample necessary properties to find the energy derivative
             auto localEnergy = computeLocalEnergy();
             energy += localEnergy;
 
@@ -63,17 +68,25 @@ void System::optimizeParameters(
             deltaPsi += WFder;
             derivativePsi += WFder*localEnergy;
         }
+        // Average results of the run
         energy /= numberOfMetropolisSteps;
         derivativePsi /= numberOfMetropolisSteps;
         deltaPsi /= numberOfMetropolisSteps;
         
+        // Find Energy derivative
         energyDer = 2*(derivativePsi-deltaPsi*energy);
-        std::cout << m_waveFunction->getParameters().at(0) << " " << energyDer << std::endl;
+        const char separator    = ' ';
+        const int nameWidth     = 20;
+        std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << m_waveFunction->getParameters().at(0);
+        std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << energy << std::endl;
+        std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << energyDer << std::endl;
         
         if (abs(energyDer) < etol) {
             std::cout << "iter = " << iter + 1 << std::endl;
             std::cout << "energyDer = " << energyDer << std::endl;
-            break;}   
+            break;}
+
+        // Adjust alpha value
         double adjust = -energyDer*eta;
         m_waveFunction->adjustAlpha(adjust);
     }
@@ -93,6 +106,8 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
     
     std::ofstream myfile;
     myfile.open("Results/Energies_G_" + std::to_string(m_numberOfParticles) + ".dat");
+    
+    // Start parallelization
     #pragma omp parallel num_threads(numberOfThreads)
     {
     unsigned int writestep = 1<<10;
@@ -102,9 +117,12 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
         for (unsigned int j = 0; j < m_numberOfParticles; j++) {
             // Call solver method to do a single Monte-Carlo step.
             bool acceptedStep = m_solver->step(timestep, *m_waveFunction, m_particles, j);
+
+            // Truthiness nonsense to count the number of particle movements that were accepted
             numberOfAcceptedSteps += acceptedStep;
         }
         
+        // Avoid race conditions
         #pragma omp critical 
         {
         sampler->sample(numberOfAcceptedSteps, this);

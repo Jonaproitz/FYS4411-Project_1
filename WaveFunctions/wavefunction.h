@@ -21,5 +21,6 @@ public:
 protected:
     int m_numberOfParameters = 0;
     std::vector<double> m_parameters = std::vector<double>();
+    double m_a = 0;
 };
 

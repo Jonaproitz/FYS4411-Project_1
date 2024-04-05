@@ -18,10 +18,12 @@ SimpleGaussian::SimpleGaussian(double alpha)
     m_parameters.reserve(2);
     m_parameters.push_back(alpha);
     m_parameters.push_back(beta);
+    m_a = 0.0043;
 }
 
 double SimpleGaussian::evaluate(std::vector<std::unique_ptr<class Particle>>& particles) {
     // Define the wavefunction in nD for n particles from the definition of 1D
+    // This function isnt really used
     double E = 1;
     double p = particles.size();
     double d = particles.at(0)->getPosition().size();
@@ -42,27 +44,27 @@ double SimpleGaussian::evaluate1D(double x, unsigned int dimension) {
 }
 
 double SimpleGaussian::reducedF(std::vector<std::unique_ptr<class Particle>>& particles, std::vector<double> rk, unsigned int particle_k) {
-    double a = 0.0043;
+    // Define the interaction term for a single particle, interacting with all other particles
     unsigned int p = particles.size();
     unsigned int d = rk.size();
     double f = 1;
     for (unsigned int j=0; j<p; j++) {
-        if (j != particle_k) {
+        if (j != particle_k && m_a != 0) {
             std::vector<double> rj = particles.at(j)->getPosition();
             double rkl, rkl2 = 0;
             for (unsigned int di=0; di<d; di++) {
                 rkl2 = (rj.at(di) - rk.at(di))*(rj.at(di) - rk.at(di));
             }
             rkl = sqrt(rkl2);
-            if (rkl <= a) {f = 1e-10; break;}
-            else {f *= 1 - a/rkl;}
+            if (rkl <= m_a) {f = 1e-10; break;}
+            else {f *= 1 - m_a/rkl;}
         }
     }
     return f;
 }
 
 std::vector<double> SimpleGaussian::quantumForce1D(std::vector<std::unique_ptr<class Particle>>& particles, std::vector<double> rk, unsigned int particle_k) {
-    double beta, a = 0.0043;
+    double beta;
 
     std::vector<double> qf;
     unsigned int dimension = rk.size();
@@ -70,22 +72,24 @@ std::vector<double> SimpleGaussian::quantumForce1D(std::vector<std::unique_ptr<c
         qf.push_back(0.0);
     }
     for (unsigned int j=0; j<particles.size(); j++) {
-        if (j != particle_k) {
+        if (j != particle_k && m_a != 0) {
             std::vector<double> rj = particles.at(j)->getPosition();
+            // Find the length between particles
             double rkj2 = 0.0;
             for (unsigned int di=0; di<rk.size(); di++) {
                 double x = rk.at(di) - rj.at(di);
                 rkj2 += x*x;
             }
             double rkj = sqrt(rkj2);
-            if (rkj <= a) {
+            if (rkj <= m_a) {
                 for (unsigned int i = 0; i<dimension; i++) {
-                    qf.at(i) = 10;
+                    qf.at(i) = (rk.at(i) - rj.at(i))*1e10;
                 }
                 break;
             }
             for (unsigned int dim=0; dim<dimension; dim++) {
-                qf.at(dim) += (rk.at(dim) - rj.at(dim)) * a/(sqrt(rkj2) * (1- a/sqrt(rkj2)));
+                // Find the interaction between particles
+                qf.at(dim) += (rk.at(dim) - rj.at(dim)) * m_a/(sqrt(rkj2) * (1- m_a/sqrt(rkj2)));
             }
         }
     }
@@ -94,6 +98,7 @@ std::vector<double> SimpleGaussian::quantumForce1D(std::vector<std::unique_ptr<c
     for (unsigned int i=0; i < dimension; i++) {
         if (i == 2) {beta = m_parameters.at(1);}
         else {beta = 1.0;}
+        // Store the final expression for the quantum force
         qf.at(i) = -4*m_parameters.at(0)*beta*rk.at(i) + 2*qf.at(i);
     }
     return qf;
@@ -118,7 +123,6 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
     // Compute the local kinetic part of the local derivative
     double alpha = m_parameters.at(0);
     double beta = m_parameters.at(1);
-    double a = 0.0043;
     double E = 0.0;
 
     unsigned int p = particles.size();
@@ -138,7 +142,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
         E += 2*alpha*(2*alpha*r2 - d);
 
         for (unsigned int j=0; j<p; j++) {
-            if (j != k) {
+            if (j != k && m_a != 0) {
                 std::vector<double> rj = particles.at(j)->getPosition();
                 double temp = 0.0, rkj2 = 0.0;
                 for (unsigned int di=0; di<d; di++) {
@@ -150,7 +154,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
                 }
                 double rkj = sqrt(rkj2);
                 // Second term
-                E += -4*alpha * temp*a/(rkj*rkj*rkj*(1-a/rkj));
+                E += -4*alpha * temp*m_a/(rkj*rkj*rkj*(1-m_a/rkj));
                 for (unsigned int i=0; i<p; i++) {
                     if (i != k) {
                         double temp = 0.0, rki2 = 0.0;
@@ -163,12 +167,12 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
                         }
                         double rki = sqrt(rki2);
                         // Third term
-                        E += temp/(rkj*rki) * a/(rkj2*(1-a/rkj)) * a/(rki2*(1 - a/rki));
+                        E += temp/(rkj*rki) * m_a/(rkj2*(1-m_a/rkj)) * m_a/(rki2*(1 - m_a/rki));
                     }
                 }
                 // Fourth term
-                E += 2*a/(rkj*rkj2*(1-a/rkj));
-                E += a/(rkj2*rkj*(1 - a/rkj)) * (a/(rkj*(1-a/rkj)) - 1);
+                E += 2*m_a/(rkj*rkj2*(1-m_a/rkj));
+                E += m_a/(rkj2*rkj*(1 - m_a/rkj)) * (m_a/(rkj*(1-m_a/rkj)) - 1);
             }
         }
     }
