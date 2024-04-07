@@ -23,7 +23,7 @@ std::vector<std::unique_ptr<Particle>> setupRandomUniformInitialState(
 
         // Give every particle a position in space chosen from a gaussian distribution in each dimension
         for (unsigned int j=0; j < numberOfDimensions; j++) {
-            double num = rng.nextGaussian(0, numberOfParticles);
+            double num = rng.nextGaussian(0, 1);
             position.push_back(num*sqrt(timestep));
         }
 

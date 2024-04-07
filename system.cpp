@@ -78,7 +78,7 @@ void System::optimizeParameters(
         const char separator    = ' ';
         const int nameWidth     = 20;
         std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << m_waveFunction->getParameters().at(0);
-        std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << energy;
+        std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << energy/m_particles.size();
         std::cout << std::left << std::setw(nameWidth) << std::setfill(separator) << energyDer << std::endl;
         
         if (abs(energyDer) < etol) {

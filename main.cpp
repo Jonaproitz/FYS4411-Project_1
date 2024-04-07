@@ -22,11 +22,11 @@ int main() {
     // Initial setup for simulation
     unsigned int numberOfDimensions = 3;
     unsigned int numberOfParticles = 50;
-    unsigned int numberOfMetropolisSteps = (unsigned int) 3e4;
+    unsigned int numberOfMetropolisSteps = (unsigned int) 1e4;
     unsigned int numberOfEquilibrationSteps = (unsigned int) 1e4;
     double omega = 1.0; // Oscillator frequency.
-    double alpha = 0.75; // Variational parameter.
-    double timestep = 0.01; // Metropolis step length.
+    double alpha = 0.5; // Variational parameter.
+    double timestep = 0.005; // Metropolis step length.
 
     // The random engine can also be built without a seed
     auto rng = std::make_unique<Random>(seed);

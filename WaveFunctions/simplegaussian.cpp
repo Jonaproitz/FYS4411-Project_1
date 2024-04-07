@@ -56,7 +56,7 @@ double SimpleGaussian::reducedF(std::vector<std::unique_ptr<class Particle>>& pa
                 rkl2 = (rj.at(di) - rk.at(di))*(rj.at(di) - rk.at(di));
             }
             rkl = sqrt(rkl2);
-            if (rkl <= m_a) {f = 1e-10; break;}
+            if (rkl <= m_a) {f = 1e-30; break;}
             else {f *= 1 - m_a/rkl;}
         }
     }
@@ -83,13 +83,14 @@ std::vector<double> SimpleGaussian::quantumForce1D(std::vector<std::unique_ptr<c
             double rkj = sqrt(rkj2);
             if (rkj <= m_a) {
                 for (unsigned int i = 0; i<dimension; i++) {
-                    qf.at(i) = (rk.at(i) - rj.at(i))*1e10;
+                    qf.at(i) = 0;
                 }
+                std::cout << "1" << std::endl;
                 break;
             }
             for (unsigned int dim=0; dim<dimension; dim++) {
                 // Find the interaction between particles
-                qf.at(dim) += (rk.at(dim) - rj.at(dim)) * m_a/(sqrt(rkj2) * (1- m_a/sqrt(rkj2)));
+                qf.at(dim) += (rk.at(dim) - rj.at(dim)) * m_a/(rkj2*rkj * (1- m_a/rkj));
             }
         }
     }
@@ -133,13 +134,13 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
         
 
         // First term
-        double r2 = 0.0;
+        // double r2 = 0.0;
         for (unsigned int di=0; di<d; di++) {
             double x = rk.at(di);
-            if (di == 2) {r2 += beta*x*x;}
-            else {r2 += x*x;}
+            if (di == 2) {E += 2*alpha*beta*(2*alpha*beta*x*x - 1);}
+            else {E += 2*alpha*(2*alpha*x*x - 1);}
         }
-        E += 2*alpha*(2*alpha*r2 - d);
+        // E += 2*alpha*(2*alpha*r2 - d);
 
         for (unsigned int j=0; j<p; j++) {
             if (j != k && m_a != 0) {
@@ -154,7 +155,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
                 }
                 double rkj = sqrt(rkj2);
                 // Second term
-                E += -4*alpha * temp*m_a/(rkj*rkj*rkj*(1-m_a/rkj));
+                E += -4*alpha * temp*m_a/(rkj2*rkj*(1-m_a/rkj));
                 for (unsigned int i=0; i<p; i++) {
                     if (i != k) {
                         double temp = 0.0, rki2 = 0.0;
@@ -171,8 +172,11 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
                     }
                 }
                 // Fourth term
-                E += 2*m_a/(rkj*rkj2*(1-m_a/rkj));
-                E += m_a/(rkj2*rkj*(1 - m_a/rkj)) * (m_a/(rkj*(1-m_a/rkj)) - 1);
+                //E += 2*m_a/(rkj2*rkj*(1-m_a/rkj));
+                //E += -m_a/(rkj2*rkj*(1 - m_a/rkj)) * (m_a/(rkj*(1-m_a/rkj)) + 2);
+                E += -m_a*m_a / (rkj2*rkj2 * (1 - m_a/rkj) * (1 - m_a/rkj));
+
+                if (rkj <= m_a) {E = -1e10; break; break;}
             }
         }
     }
@@ -182,4 +186,5 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
 void SimpleGaussian::adjustAlpha(double adjust) {
     // Adjust alpha value
     m_parameters.at(0) += adjust;
+    assert(m_parameters.at(0) >= 0);
 }
