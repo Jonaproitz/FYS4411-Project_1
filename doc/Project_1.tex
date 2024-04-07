@@ -693,8 +693,19 @@ The code is logged in different branches coenciding with the problems in the pro
 
 
 \section{\large Results}
-    For $\beta = \gamma = 2.82843$ the calculations with 10 particles gives us $\alpha = 6.88022$ and a ground state energy of $19.420763$ with a standard deviation of $0.026794$.
-    With 50 particles for $\alpha = 0.75$ we get a ground state energy of $95.779891$ with a standard deviation of $0.018782$.
+    For $\beta = \gamma = 2.82843$ the calculations with 10 particles gives us $\alpha = 0.497766$ and a ground state energy of $24.426851$ with a standard deviation of $0.000407$.
+    With 50 particles for $\alpha = 0.492743$ we get a ground state energy of $129.459438$ with a standard deviation of $0.071335$.
+
+    \begin{table}[!ht]
+        \begin{tabular}{|l|l|l|l|}
+        \hline
+        Particles           & $\alpha$      & Energy         & standard deviation   \\ \hline
+        10                  & 0.497766      & 24.3808        & 0.050775             \\ \hline
+        50                  & 4.36 seconds  & 42.01 seconds  & 409.61 seconds       \\ \hline
+        100                 & 4.36 seconds  & 42.01 seconds  & 409.61 seconds       \\ \hline
+        \end{tabular}
+        \caption{CPU time for a Monte Carlo calcualtion, with both equilibration steps and the main algorithm for $n=1$, $n=10$ and $n=100$.}
+    \end{table}
 
 
 \end{document}
