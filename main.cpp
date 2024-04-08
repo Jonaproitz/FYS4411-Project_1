@@ -26,7 +26,7 @@ int main() {
     unsigned int numberOfEquilibrationSteps = (unsigned int) 1e4;
     double omega = 1.0; // Oscillator frequency.
     double alpha = 0.5; // Variational parameter.
-    double timestep = 0.005; // Metropolis step length.
+    double timestep = 0.01; // Metropolis step length.
 
     // The random engine can also be built without a seed
     auto rng = std::make_unique<Random>(seed);
