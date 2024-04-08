@@ -50,7 +50,7 @@ void System::optimizeParameters(
         unsigned int numberOfMetropolisSteps)
 {
     // Set endpoint and weighting of optimization
-    double etol = 1e-2, eta = 1e-1 / m_numberOfParticles;
+    double etol = 1e-2, eta = 1e-2 / m_numberOfParticles;
     unsigned int MaxVariations = 20;
     for (unsigned int iter=0; iter<MaxVariations; iter++) {
         // Define properties used in optimization
