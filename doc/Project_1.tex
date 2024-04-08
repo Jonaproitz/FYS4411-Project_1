@@ -692,20 +692,46 @@ The code is logged in different branches coenciding with the problems in the pro
     This is done such that $f(a, \abs{r_i - r_j})$ can be calculated once rather than three times for each particle, in three dimensions. 
 
 
-\section{\large Results}
-    For $\beta = \gamma = 2.82843$ the calculations with 10 particles gives us $\alpha = 0.497766$ and a ground state energy of $24.426851$ with a standard deviation of $0.000407$.
-    With 50 particles for $\alpha = 0.492743$ we get a ground state energy of $129.459438$ with a standard deviation of $0.071335$.
-
+\section{\large The repuslive interaction}
+    Figure \ref{results 1} shows the results of our Monte Carlo calculation for an elliptical trap with $\beta = \gamma = 2.82843$ and $a/a_{ho} = 0.0043$ and $10$, $50$ and $100$ interacting particles.
     \begin{table}[!ht]
         \begin{tabular}{|l|l|l|l|}
         \hline
-        Particles           & $\alpha$      & Energy         & standard deviation   \\ \hline
-        10                  & 0.497766      & 24.3808        & 0.050775             \\ \hline
-        50                  & 4.36 seconds  & 42.01 seconds  & 409.61 seconds       \\ \hline
-        100                 & 4.36 seconds  & 42.01 seconds  & 409.61 seconds       \\ \hline
+        Particles           & Variational parameter $\alpha$    & Energy         & standard deviation   \\ \hline
+        10                  & 0.498085                          & 24.450653      & 0.027901             \\ \hline
+        50                  & 0.493351                          & 129.103313     & 0.155081             \\ \hline
+        100                 & 0.491609                          & 275.444469     & 0.01354              \\ \hline
         \end{tabular}
-        \caption{CPU time for a Monte Carlo calcualtion, with both equilibration steps and the main algorithm for $n=1$, $n=10$ and $n=100$.}
+        \caption{Results from Monte Carlo calculation for interacting particles in a elliptical trap with $\beta = \gamma = 2.82843$ and $a/a_{ho} = 0.0043$.}
+        \label{results 1}
     \end{table}
+    Figure \ref{results 2} shows the results of our Monte Carlo calculation for an elliptical trap with $\beta = \gamma = 2.82843$ and $10$, $50$ and $100$ non-interacting particles.
+    \begin{table}[!ht]
+        \begin{tabular}{|l|l|l|l|}
+        \hline
+        Particles           & Variational parameter $\alpha$    & Energy         & standard deviation   \\ \hline
+        10                  & 0.5                               & 24.14405       & 0.000605             \\ \hline
+        50                  & 0.5                               & 120.678625     & 0.027237             \\ \hline
+        100                 & 0.5                               & 241.34062      & 0.065614             \\ \hline
+        \end{tabular}
+        \caption{Results from Monte Carlo calculation for non-interacting particles in a elliptical trap with $\beta = \gamma = 2.82843$ and $a/a_{ho} = 0.0043$.}
+        \label{results 2}
+    \end{table}
+    The calculations are run using $2^{19}$ Monte Carlo cycles.
+    The optimization is run with $10^4$ Monte Carlo cycles for each value of $\alpha$.
+    The number of equilibration steps is $10^4$.
+    The number of Monte Carlo cycles is chosen as the sytems seem to equilibrate at a rapid pace such that running the calculations for longer wont change the results much.
+    This can also be seen from the low standard deviations when calculating the energies.
 
+
+    Comparing table \ref{results 1} and \ref{results 2} we note the increase in energy and decrease in the variational parameter $\alpha$ when we increase the number of particles.
+    The increase in energy seems to match the results found in \cite{dubois2001bose}.
+    The decrease in $\alpha$ matches the results from \cite{nilsen2005vortices}, altough in out case the change is rather small.
+
+
+
+
+\bibliographystyle{plain}
+\bibliography{Project_1}
 
 \end{document}
