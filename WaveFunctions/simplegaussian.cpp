@@ -85,7 +85,6 @@ std::vector<double> SimpleGaussian::quantumForce1D(std::vector<std::unique_ptr<c
                 for (unsigned int i = 0; i<dimension; i++) {
                     qf.at(i) = 0;
                 }
-                std::cout << "1" << std::endl;
                 break;
             }
             for (unsigned int dim=0; dim<dimension; dim++) {
@@ -134,13 +133,11 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
         
 
         // First term
-        // double r2 = 0.0;
         for (unsigned int di=0; di<d; di++) {
             double x = rk.at(di);
             if (di == 2) {E += 2*alpha*beta*(2*alpha*beta*x*x - 1);}
             else {E += 2*alpha*(2*alpha*x*x - 1);}
         }
-        // E += 2*alpha*(2*alpha*r2 - d);
 
         for (unsigned int j=0; j<p; j++) {
             if (j != k && m_a != 0) {
@@ -172,11 +169,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<std::unique_ptr<class
                     }
                 }
                 // Fourth term
-                //E += 2*m_a/(rkj2*rkj*(1-m_a/rkj));
-                //E += -m_a/(rkj2*rkj*(1 - m_a/rkj)) * (m_a/(rkj*(1-m_a/rkj)) + 2);
                 E += -m_a*m_a / (rkj2*rkj2 * (1 - m_a/rkj) * (1 - m_a/rkj));
-
-                if (rkj <= m_a) {E = -1e10; break; break;}
             }
         }
     }
