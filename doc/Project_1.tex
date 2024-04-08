@@ -617,8 +617,63 @@ The code is logged in different branches coenciding with the problems in the pro
         \end{split}
         \end{align}
 
+    Lastly going from $r \to r/a_{ho}$ we can rewrite the elliptical Hamiltonian
+    \begin{align*}
+            H 
+        =   \sum_{i=1}^N \left(\frac{-\hbar^2}{2m}\nabla_i^2 + \frac{1}{2}m\left[\omega_{ho}^2(x^2 + y^2) + \omega_z^2 z^2\right]\right) + \sum_{i < j} V_{int}(\abs{\mathbf{r}_i - \mathbf{r}_j}) \\
+        \to
+            H
+        =   \sum_{i=1}^{N} \left(\frac{-\hbar^2}{2m}\frac{\nabla_i^2}{a_{ho}^2} + \frac{a_{ho}^2}{2}m\left[\omega_{ho}^2(x^2 + y^2) + \omega_z^2 z^2\right]\right) + \sum_{i < j} V_{int}(\abs{\mathbf{r}_i - \mathbf{r}_j}) \\
+        =   \sum_{i=1}^{N} \left(\frac{-\hbar \omega_{ho}}{2} \nabla_i^2 + \frac{\hbar \omega_{ho}}{2}\left[x^2 + y^2 + \omega_{ho} \gamma^2 z^2\right]\right) + \sum_{i < j} V_{int}(\abs{\mathbf{r}_i - \mathbf{r}_j})
+    \end{align*}
+    where we have used $a_{ho} = \sqrt{\hbar / m\omega_{ho}}$ and $\gamma = \omega_z/\omega_{ho}$.
+    In units $\hbar\omega_{ho}$ the Hamiltonian can therefore be written
+    \begin{align}
+    \begin{split}
+            H 
+        =   \sum_{i=1}^{N} \left(\frac{-1}{2} \nabla_i^2 + \frac{1}{2}\left[x^2 + y^2 + \omega_{ho} \gamma^2 z^2\right]\right) + \sum_{i < j} V_{int}(\abs{\mathbf{r}_i - \mathbf{r}_j}) \\
+        =   \frac{1}{2} \sum_{i=1}^{N} \left(-\nabla_i^2 + x^2 + y^2 + \omega_{ho} \gamma^2 z^2\right) + \sum_{i < j} V_{int}(\abs{\mathbf{r}_i - \mathbf{r}_j})
+    \end{split}
+    \end{align}
+
 
     \subsection*{Onebody densities}
+        The one-body density for $N$ non-interacting particles in a harmonic oscillator is given by 
+        \begin{equation}
+                \rho(\mathbf{r}_1)
+            =   \int \prod_{i=2}^{N} d^3\mathbf{r}_i \abs{\Psi_T(\mathbf{r}_1, \mathbf{r}_2, ..., \mathbf{r}_N)}^2
+            =   e^{-2\alpha\mathbf{r}_1^2} \left(\int d^3\mathbf{r} e^{-2\alpha\mathbf{r}^2}\right)^{N-1}
+            =   \left(\frac{\pi}{\alpha}\right)^\frac{3(N-1)}{2} e^{-2\alpha \mathbf{r}_1^2}
+        \end{equation}
+        We note that the system is isotropic, such that the orientation in space is irrelevant, and thus by normalizing the expression for $\rho$
+        \begin{equation}
+                \rho(r)
+            =   \left(\frac{8\alpha}{\pi}\right)^\frac{1}{2} e^{-2 \alpha r^2}
+        \end{equation}
+
+        In the interacting case we limit ourselves to the two-particle case.
+        \begin{equation}
+                \rho(\mathbf{r}_1)
+            =   g^2(\mathbf{r}_1) \int d^3\mathbf{r}_2 g^2(\mathbf{r}_2) f^2(a, \abs{\mathbf{r}_1 - \mathbf{r}_2})
+        \end{equation}
+        Defining the new vector $\mathbf{x} = \mathbf{r}_2 - \mathbf{r}_1$
+        \begin{equation}
+                \rho(\mathbf{r}_1)
+            =   g^2(\mathbf{r}_1) \int d^3 \mathbf{u}g^2(\mathbf{u} + \mathbf{r}_1) f^2(a, \abs{u})
+            =   e^{-4 \alpha \mathbf{r}_1^2} \int d^3\mathbf{u} e^{-2 \alpha (\mathbf{u}^2 + 2(\mathbf{u} + \mathbf{r}_1))} f^2(a, \abs{\mathbf{u}})
+        \end{equation}
+        Again as the system is isotropic the orientation is irrelevant and we can assume $\mathbf{r}_1$ to be in the $z$-direction.
+        The expression can then be solved by converting the integral to spherical coordinates and integrating out the angular dependencies.
+        \begin{equation}
+                \rho(\mathbf{r}_1)
+            =   \frac{\pi}{\alpha r_1}e^{-4 \alpha r_1^2} \int_{0}^{\infty} du u\sinh(4 \alpha u r_1) e^{2 \alpha u} f^2(a, u)
+        \end{equation}
+        Removing the trivial case of $f(a, \mathbf{r}_1) = 0$ for $\abs{\mathbf{r}_1} \leq a$ we then get
+        \begin{equation}
+                \rho(\mathbf{r}_1)
+            =   \frac{\pi}{\alpha r_1}e^{-4 \alpha r_1^2} \int_{a}^{\infty} du u\sinh(4 \alpha u r_1) e^{2 \alpha u} \left(1 - \frac{a}{u}\right)^2
+        \end{equation}
+
 
 
 \section{\large Numerical approach}
@@ -766,7 +821,17 @@ The code is logged in different branches coenciding with the problems in the pro
     The decrease in $\alpha$ matches the results from \cite{nilsen2005vortices}, altough in our case the change is rather small.
 
 
+\section{Review of the project}
+    Let us start with the postives.
+    I feel like I have learned quite a few things working my way through this project.
+    Programming in C++ is not something I have allot of experience in, and the class structures in this project was a good way of getting some hands on experience in how to write in this language.
+    Furthermore it was a good introduction on how to think about coding projects, and how to plan ahead in your coding structure.
+    I have learned allot through the mistakes that I made along the way and gotten a viewpoint of what aspects of the program should be prioritized when starting to write.
 
+    Then to the negatives, og wich I only really have one.
+    The pacing of this project seemed very off.
+    It was in allot of ways very slow to start with until it all suddenly exploded towards the end.
+    Some clearer goals of where you should be in the project at certain times would definately be appreaciated, and I believe it would be a good tool for knowing wich aspects that need to be shown in the lectures.
 
 \bibliographystyle{plain}
 \bibliography{Project_1}
