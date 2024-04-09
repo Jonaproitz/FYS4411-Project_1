@@ -143,6 +143,12 @@ double System::computeLocalEnergy()
     return m_hamiltonian->computeLocalEnergy(*m_waveFunction, m_particles);
 }
 
+double System::computeOnebodyDensity()
+{
+    // Helper function
+    return m_hamiltonian->computeOnebodyDensity(*m_waveFunction, m_particles);
+}
+
 const std::vector<double>& System::getWaveFunctionParameters()
 {
     // Helper function

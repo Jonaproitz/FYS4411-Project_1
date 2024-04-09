@@ -13,5 +13,6 @@ public:
     std::vector<double> quantumForce1D(std::vector<std::unique_ptr<class Particle>>& particles, std::vector<double> rk, unsigned int particle_k);
     double wfDerivative(std::vector<std::unique_ptr<class Particle>>& particles);
     double computeDoubleDerivative(std::vector<std::unique_ptr<class Particle>>& particles);
+    double geta() {return m_a;};
     void adjustAlpha(double d);
 };

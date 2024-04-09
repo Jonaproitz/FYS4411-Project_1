@@ -29,6 +29,7 @@ Sampler::Sampler(
     m_cumulativeEnergy2 = 0;
     m_stepLength = timestep;
     m_numberOfAcceptedSteps = 0;
+    m_cumulativeDensity = 0;
 }
 
 
@@ -36,6 +37,9 @@ void Sampler::sample(unsigned int acceptedStep, System* system) {
     auto localEnergy = system->computeLocalEnergy();
     m_cumulativeEnergy  += localEnergy;
     m_cumulativeEnergy2  += localEnergy*localEnergy;
+
+    auto density = system->computeOnebodyDensity();
+    m_cumulativeDensity += density;
 
     m_stepNumber++;
     m_numberOfAcceptedSteps += acceptedStep;
@@ -62,10 +66,12 @@ void Sampler::printOutputToTerminal(System& system) {
     cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "Alpha value";
     cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "Energies";
     cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "Variance";
+    cout << std::left << std::setw(nameWidth) << std::setfill(separator) << "Onebody density";
     cout << endl;
     cout << std::left << std::setw(nameWidth) << std::setfill(separator) << pa.at(0);
     cout << std::left << std::setw(nameWidth) << std::setfill(separator) << m_energy;
     cout << std::left << std::setw(nameWidth) << std::setfill(separator) << m_variance;
+    cout << std::left << std::setw(nameWidth) << std::setfill(separator) << m_onebodyDensity;
     cout << endl;
     
 }
@@ -74,6 +80,8 @@ void Sampler::computeAverages() {
     // Compute the averages of the sampled quantities.
     m_energy = m_cumulativeEnergy / m_numberOfMetropolisSteps;
     double m_energy2 = m_cumulativeEnergy2 / m_numberOfMetropolisSteps;
+
+    m_onebodyDensity = m_cumulativeDensity / m_numberOfMetropolisSteps;
 
     // Find the variance
     m_variance = m_energy2 - m_energy*m_energy;

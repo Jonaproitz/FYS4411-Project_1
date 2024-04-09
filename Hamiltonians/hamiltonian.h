@@ -10,5 +10,9 @@ public:
             class WaveFunction& waveFunction,
             std::vector<std::unique_ptr<class Particle>>& particles
     ) = 0;
+    virtual double computeOnebodyDensity(
+            class WaveFunction& waveFunction,
+            std::vector<std::unique_ptr<class Particle>>& particles
+    ) = 0;
 };
 

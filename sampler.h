@@ -31,4 +31,6 @@ private:
     double m_cumulativeEnergy = 0;
     double m_cumulativeEnergy2 = 0;
     double m_stepLength = 0;
+    double m_onebodyDensity = 0;
+    double m_cumulativeDensity = 0;
 };

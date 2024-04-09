@@ -25,6 +25,7 @@ public:
             unsigned int numberOfMetropolisSteps);
 
     double computeLocalEnergy();
+    double computeOnebodyDensity();
     const std::vector<double>& getWaveFunctionParameters();
     double wfDerivative();
 
