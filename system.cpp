@@ -47,9 +47,9 @@ void System::energyDerivative(
         unsigned int numberOfMetropolisSteps)
 {
 
-    double energy = 0, deltaPsi = 0, derivativePsi = 0, energyDer = 0;
-    double eta = 0.05, etol = 1e-4;
+    double eta = 0.1/m_numberOfParticles, etol = 1e-2;
     unsigned int MaxVariations = 1000;
+    double energy = 0, deltaPsi = 0, derivativePsi = 0, energyDer = 0;
         for (unsigned int iter=0; iter<MaxVariations; iter++) {
             for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
                 for (unsigned int j = 0; j < m_numberOfParticles; j++) {
@@ -72,11 +72,11 @@ void System::energyDerivative(
         deltaPsi /= numberOfMetropolisSteps;
 
         energyDer = 2*(derivativePsi-deltaPsi*energy);
-        m_waveFunction->adjustAlpha(-eta*energyDer);
-        if (abs(eta*energyDer) < etol) {
+        if (abs(energyDer) < etol) {
             std::cout << "iter = " << iter + 1 << std::endl;
             std::cout << "energyDer = " << energyDer << std::endl;
             break;}
+        m_waveFunction->adjustAlpha(-eta*energyDer);
     }
     std::cout << "minimal alpha: " << m_waveFunction->getParameters().at(0) << std::endl;
 }
@@ -92,8 +92,8 @@ std::unique_ptr<class Sampler> System::runMetropolisSteps(
             numberOfMetropolisSteps);
     
     std::ofstream myfile;
-    myfile.open("Energies.dat");
-    unsigned int writestep = 2<<10;
+    myfile.open("Results/Energies_E_" + std::to_string(m_numberOfParticles) + ".dat");
+    unsigned int writestep = 2<<8;
 
     for (unsigned int i = 0; i < numberOfMetropolisSteps; i++) {
         unsigned int numberOfAcceptedSteps = 0;
