@@ -656,7 +656,7 @@ The code is logged in different branches coenciding with the problems in the pro
                 \rho(\mathbf{r}_1)
             =   g^2(\mathbf{r}_1) \int d^3\mathbf{r}_2 g^2(\mathbf{r}_2) f^2(a, \abs{\mathbf{r}_1 - \mathbf{r}_2})
         \end{equation}
-        Defining the new vector $\mathbf{x} = \mathbf{r}_2 - \mathbf{r}_1$
+        Defining the new vector $\mathbf{u} = \mathbf{r}_2 - \mathbf{r}_1$
         \begin{equation}
                 \rho(\mathbf{r}_1)
             =   g^2(\mathbf{r}_1) \int d^3 \mathbf{u}g^2(\mathbf{u} + \mathbf{r}_1) f^2(a, \abs{u})
@@ -666,12 +666,12 @@ The code is logged in different branches coenciding with the problems in the pro
         The expression can then be solved by converting the integral to spherical coordinates and integrating out the angular dependencies.
         \begin{equation}
                 \rho(\mathbf{r}_1)
-            =   \frac{\pi}{\alpha r_1}e^{-4 \alpha r_1^2} \int_{0}^{\infty} du u\sinh(4 \alpha u r_1) e^{2 \alpha u} f^2(a, u)
+            =   \frac{\pi}{\alpha r_1}e^{-4 \alpha r_1^2} \int_{0}^{\infty} du u\sinh(4 \alpha u r_1) e^{-2 \alpha u} f^2(a, u)
         \end{equation}
         Removing the trivial case of $f(a, \mathbf{r}_1) = 0$ for $\abs{\mathbf{r}_1} \leq a$ we then get
         \begin{equation}
                 \rho(\mathbf{r}_1)
-            =   \frac{\pi}{\alpha r_1}e^{-4 \alpha r_1^2} \int_{a}^{\infty} du u\sinh(4 \alpha u r_1) e^{2 \alpha u} \left(1 - \frac{a}{u}\right)^2
+            =   \frac{\pi}{\alpha r_1}e^{-4 \alpha r_1^2} \int_{a}^{\infty} du u\sinh(4 \alpha u r_1) e^{-2 \alpha u} \left(1 - \frac{a}{u}\right)^2
         \end{equation}
 
 
@@ -829,8 +829,26 @@ The code is logged in different branches coenciding with the problems in the pro
     The decrease in $\alpha$ matches the results from \cite{nilsen2005vortices}, altough in our case the change is rather small.
 
 
+    \begin{table}[!ht]
+        \begin{tabular}{|l|l|}
+        \hline
+                                        & Onebody density       \\ \hline
+        Without repulsive interaction   & 0.478737              \\ \hline
+        With repulsive interaction      & 0.000987037           \\ \hline
+        \end{tabular}
+        \caption{}
+        \label{results 3}
+    \end{table}
+
+    In table \ref*{results 3} we see the results of the onebody calculations run for two particles with and without the repulsive interaction.
+    There is a clear decrease in the onebody density as a result of the repuslive interaction.
+    
+    
+    
+
+
 \section{Review of the project}
-    Let us start with the postives.
+    Let us start with the positives.
     I feel like I have learned quite a few things working my way through this project.
     Programming in C++ is not something I have allot of experience in, and the class structures in this project was a good way of getting some hands on experience in how to write in this language.
     Furthermore it was a good introduction on how to think about coding projects, and how to plan ahead in your coding structure.
