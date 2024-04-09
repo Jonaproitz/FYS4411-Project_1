@@ -33,4 +33,5 @@ private:
     double m_stepLength = 0;
     double m_onebodyDensity = 0;
     double m_cumulativeDensity = 0;
+    double m_cumulativeDensity2 = 0;
 };

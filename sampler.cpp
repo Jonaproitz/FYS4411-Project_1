@@ -30,6 +30,7 @@ Sampler::Sampler(
     m_stepLength = timestep;
     m_numberOfAcceptedSteps = 0;
     m_cumulativeDensity = 0;
+    m_cumulativeDensity2 = 0;
 }
 
 
@@ -40,6 +41,7 @@ void Sampler::sample(unsigned int acceptedStep, System* system) {
 
     auto density = system->computeOnebodyDensity();
     m_cumulativeDensity += density;
+    m_cumulativeDensity2 += density*density;
 
     m_stepNumber++;
     m_numberOfAcceptedSteps += acceptedStep;
@@ -81,7 +83,7 @@ void Sampler::computeAverages() {
     m_energy = m_cumulativeEnergy / m_numberOfMetropolisSteps;
     double m_energy2 = m_cumulativeEnergy2 / m_numberOfMetropolisSteps;
 
-    m_onebodyDensity = m_cumulativeDensity / m_numberOfMetropolisSteps;
+    m_onebodyDensity = m_cumulativeDensity / (sqrt(m_cumulativeDensity2) * m_numberOfMetropolisSteps);
 
     // Find the variance
     m_variance = m_energy2 - m_energy*m_energy;

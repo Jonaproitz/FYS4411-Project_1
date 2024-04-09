@@ -48,7 +48,7 @@ double HarmonicOscillator::computeOnebodyDensity(
         double u = sqrt(u2);
         double r = sqrt(r2);
         
-        return 1/(2*M_PI) / (alpha * r) * exp(-4*alpha*r2) * u * sinh(4*alpha*u*r)*exp(-2*alpha*u)*(1 - a/u)*(1 - a/u);
+        return M_PI / (alpha * r) * exp(-4*alpha*r2) * u * sinh(4*alpha*u*r)*exp(-2*alpha*u)*(1 - a/u)*(1 - a/u);
     }
     else {
         double r2 = 0;
