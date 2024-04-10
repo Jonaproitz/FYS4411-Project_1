@@ -256,9 +256,6 @@ $RECYCLE.BIN/
 *.mp4
 
 vmc
-compile_project
-CMakeLists.txt
-MakeFile
 
 .vscode/
 
