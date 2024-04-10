@@ -83,7 +83,7 @@ void Sampler::computeAverages() {
     m_energy = m_cumulativeEnergy / m_numberOfMetropolisSteps;
     double m_energy2 = m_cumulativeEnergy2 / m_numberOfMetropolisSteps;
 
-    m_onebodyDensity = m_cumulativeDensity / (sqrt(m_cumulativeDensity2) * m_numberOfMetropolisSteps);
+    m_onebodyDensity = m_cumulativeDensity / m_numberOfMetropolisSteps;
 
     // Find the variance
     m_variance = m_energy2 - m_energy*m_energy;
