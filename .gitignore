@@ -266,16 +266,10 @@ MakeFile
 *.aux
 *.log
 *.out
-*.bib
+Project_1Notes.bib
 *.bbl
 *.blg
 *.fdb_latexmk
 *.fls
 *.synctex.gz
 *.pdf
-
-# Generated txt files
-*.txt
-*.dat
-
-doc/figures
