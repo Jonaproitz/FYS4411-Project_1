@@ -48,7 +48,7 @@ The code is logged in different branches coenciding with the problems in the pro
     Note that validity of these studies are dependent on the condition that the system is dilute, or in other words that the average distance between atoms is much larger than the range of the inter-atomic interactions. 
     Thus interactions of the system is largely dominated by two-body collisons wich are well described by the s-wave scattering length $a$.
     When defining the diluteness of a gas an important aspect is the gas parameter $x(r) = n(r)a^3$, where $n(r)$ is the local density of the system, and for low values of the average gas parameter $x_{av} = 10^{-3}$ the mean field Gross-Pitaevskii equation works excidingly well.
-    Yet it has bin shown experimentally that the local gas paramet can exceed this value by tuning the scattering length in the pressence of a Feshbach resonance.
+    Yet it has been shown experimentally that the local gas parameter can exceed this value by tuning the scattering length in the pressence of a Feshbach resonance.
     Thus improved many-body methods like Monte-Carlo calculations may be required.
 
 
@@ -64,37 +64,36 @@ The code is logged in different branches coenciding with the problems in the pro
     
 \section{\large Theory}
     \subsection*{Quantum Monte Carlo}
-        We approach our system with a numerical Monte Carlo calculation.
-        Using the Metroplis algorithm.
-        In general for systems consisting of several particles, the integrals involved in the calculations of various expectation values are of a multi-dimensional characteristic.
-        Traditional methods such as Gauss-Legendre quadrature will not be suitable of our manybody system.
-
+        We approach our system with a numerical Monte Carlo calculation, using the Metroplis algorithm.
+        In general for systems consisting of several particles, the integrals involved in the calculations of various expectation values are of a multi-dimensional characteristic and traditional methods such as Gauss-Legendre quadrature will not be suitable of our manybody system.
         The Monte Carlo calculation tests a variety of different states averaging the expectation value of the system, relying on the variational principle to yield the lowest states with a given symmetry.
         However in most cases, a wave function yields small values in large parts of configuration space, and a straightforward procedure which uses homogenously distributed random points in configuration space will most likely lead to poor results. 
-        Therefore we will aplly the Metropolis algorithm combined with an importance sampling to more efficiently obtaining the ground state energies.
+        Therefore we will aplly the Metropolis algorithm combined with an importance sampling to more efficiently obtain the ground state energies.
         This is done with the goal that the regions in configuration space where the wavefunction has higher values will be sampled more efficiently.
 
         With this in mind the basic procedure of a Variational Monte Carlo calculations consists of:
         \begin{itemize}
-            \item Constructing a trial wavefunction, for a manybody system consisting of $n$ particles lacated in postions $\mathbf{r = (\mathbf{r}_1,...,\mathbf{r}_2)}$. The trial wavefunction depends $m$ variational parameters $\mathbf{\alpha} = (\alpha_1,...,\alpha_m)$.
+            \item Constructing a trial wavefunction, for a manybody system consisting of $n$ particles lacated in postions $\mathbf{r = (\mathbf{r}_1,...,\mathbf{r}_2)}$. 
+            The trial wavefunction depends on $m$ variational parameters $\mathbf{\alpha} = (\alpha_1,...,\alpha_m)$.
             \item Evaluating the expectation value of the Hamiltonian $H$.
             \item Vary $\mathbf{\alpha}$ according to some minimazation algorithm and return to the first step if we are not satisfied with the results.
         \end{itemize}
         
 
-        In order to bring in the Monte Carlo machinery, we must define a probability density distribution (PDF). Using our ansatz for the trial wave function $\Psi(\mathbf{R}; \mathbf{\alpha})$ we define a trial PDF
+        In order to bring in the Monte Carlo machinery, we must define a probability density distribution (PDF). Using our ansatz for the trial wave function $\Psi_T(\mathbf{r}; \mathbf{\alpha})$ we define a trial PDF
         \begin{equation}
                 P(\mathbf{r})
-            =   \frac{\abs*{\Psi(\mathbf{r}; \mathbf{\alpha})}^2}{\int \abs*{\Psi(\mathbf{r}; \mathbf{\alpha})}^2 d\mathbf{r}}
+            =   \frac{\abs*{\Psi_T(\mathbf{r}; \mathbf{\alpha})}^2}{\int \abs*{\Psi_T(\mathbf{r}; \mathbf{\alpha})}^2 d\mathbf{r}}
         \end{equation}
-        This is our model for probability distribution function. The approximation to the expectation value of the Hamiltonian is now
+        wich is our model for the probability distribution function. 
+        The approximation to the expectation value of the Hamiltonian is now
         \begin{equation}
                 \bar{E}[\mathbf{\alpha}]
-            =   \frac{\int d\mathbf{r}\Psi_T^*(\mathbf{r};\mathbf{\alpha})H(\mathbf{r})\Psi_T(\mathbf{r};\mathbf{\alpha})}{\int d\mathbf{r} \Psi_T^*(\mathbf{R};\mathbf{\alpha})\Psi_T(\mathbf{R};\mathbf{\alpha})}
+            =   \frac{\int d\mathbf{r}\Psi_T^*(\mathbf{r};\mathbf{\alpha})H(\mathbf{r})\Psi_T(\mathbf{r};\mathbf{\alpha})}{\int d\mathbf{r} \Psi_T^*(\mathbf{r};\mathbf{\alpha})\Psi_T(\mathbf{r};\mathbf{\alpha})}
         \end{equation}
 
 
-        We define a new quantity called the local energy
+        We can then define a new quantity called the local energy
         \begin{equation}
                 E_L(\mathbf{r};\mathbf{\alpha})
             =   \frac{1}{\Psi_T(\mathbf{r};\mathbf{\alpha})}H\Psi_T(\mathbf{r};\mathbf{\alpha})
@@ -102,20 +101,20 @@ The code is logged in different branches coenciding with the problems in the pro
         which, together with our trial PDF gives
         \begin{equation}
                 \bar{E}[\mathbf{\alpha}]
-            =   \int d\mathbf{r} P(\mathbf{r} E_L(\mathbf{r};\mathbf{\alpha}))
+            =   \int d\mathbf{r} P(\mathbf{r}) E_L(\mathbf{r};\mathbf{\alpha})
             \approx
                 \frac{1}{N}\sum_{i=1}^N E_L(\mathbf{r};\mathbf{\alpha})
         \end{equation}
         where $N$ is the number of samples in the Monte Carlo calculation.
         The expression on the right hand side stems from Bernoulli's law of large numbers, which states that in the limit $N \to \infty$, the sample mean approaches the true mean.
 
-        The Algorithm for performing a variational Monte Carlo calculation goes as:
+        With the above in hand we can now define the main lines of our Monte Carlo algorithm, wich goes as:
         \begin{itemize}
             \item Fix the number of Monte Carlo steps with an initial set of positions $\mathbf{r}$ and variational parameters $\alpha$, then calculate $\abs{\Psi_T^\alpha(\mathbf{r})}^2$
             \item Initialise the energy and the variance and start the Monte Carlo calculation.
             \begin{itemize}
                 \item Calculate a trial position $\mathbf{r}_p = \mathbf{r} + a \cdot step$ where $a$ is a random variable.
-                \item Metropolis algorithm to accept or reject this move, with a probalility of acceptance $w = P(\mathbf{r}_p) / P(\mathbf{r})$
+                \item Use the Metroplis algorithm to accept or reject this move, with a probalility of acceptance $w = P(\mathbf{r}_p) / P(\mathbf{r})$
                 \item If the step is accepted, then we set $\mathbf{r} = \mathbf{r}_p$
                 \item Update averages
             \end{itemize}
@@ -136,7 +135,7 @@ The code is logged in different branches coenciding with the problems in the pro
                 \parder{x(t)}{t}
             =   DF(x(t)) + \eta
         \end{equation}
-        with $\eta$ is a random variable, giving a new positiona
+        with $\eta$ is a random variable, giving a new position
         \begin{equation}
                 y
             =   x + DF(x)\Delta t + \xi \sqrt{\Delta t}
@@ -190,7 +189,7 @@ The code is logged in different branches coenciding with the problems in the pro
 
         
     \subsection*{Gradient descent}
-        In general when doing Monte CArlo calculations, we end up computing the expectation value of the energy in terms of some parameters $\alpha_0, \alpha_1,..., \alpha_n$ and search for a minimum in this multi-variable parameter space.
+        In general when doing Monte Carlo calculations, we end up computing the expectation value of the energy in terms of some parameters $\alpha_0, \alpha_1,..., \alpha_n$ and search for a minimum in this multi-variable parameter space.
         This leads to an energy minimization problem where we need the derivative of the energy as a function of the variational parameters.
         To find the derivatives of the local energy expectation value as function of the variational parameters, we can use the chain rule and the hermiticity of the Hamiltonian.
         Limiting ourself to one variable we then define
@@ -219,43 +218,7 @@ The code is logged in different branches coenciding with the problems in the pro
             \langle\frac{\bar{\Psi_\alpha}}{\Psi[\alpha]}\rangle\langle E_L[\alpha]\rangle
         \end{equation}
 
-
-        Let us quickly remind ourselves how we derive the above method.
-        Perhaps the most celebrated of all one-dimensional root-finding routines is Newton's method, also called the Newton-Raphson method. 
-        This method requires the evaluation of both the function $f$ and its derivative $f'$ at arbitrary points. 
-        If you can only calculate the derivative numerically and/or your function is not of the smooth type, we normally discourage the use of this method.
-
-
-        The Newton-Raphson formula consists geometrically of extending the tangent line at a current point until it crosses zero, then setting the next guess to the abscissa of that zero-crossing. The mathematics behind this method is rather simple. Employing a Taylor expansion for $x$ sufficiently close to the solution $s$, we have
-        \begin{equation}
-                f(s)
-            =   0
-            =   f(x) + (s - x)f'(x) + \frac{(s - x)^2}{2}f''(x) + ...
-        \end{equation}
-        For small enough values of the function and for well-behaved functions, the terms beyond linear are unimportant, hence we obtain
-        \begin{equation}
-                f(x) + (s - x)f'(x)
-            \approx
-                0
-        \end{equation}
-        yielding
-        \begin{equation}
-                s 
-            \approx
-                x - \frac{f(x)}{f'(x)}
-        \end{equation}
-        Having in mind an iterative procedure, it is natural to start iterating with
-        \begin{equation}
-                x_{n+1}
-            =   x_n - \frac{f(x_n)}{f'(x_n)}
-        \end{equation}
-        The above is Newton-Raphson's method. It has a simple geometric interpretation, namely $x_{n+1}$ is the point where the tangent from $(x_n, f(x_n))$ crosses the $x$-axis. 
-        Close to the solution, Newton-Raphson converges fast to the desired result. However, if we are far from a root, where the higher-order terms in the series are important, the Newton-Raphson formula can give grossly inaccurate results. 
-        For instance, the initial guess for the root might be so far from the true root as to let the search interval include a local maximum or minimum of the function. 
-        If an iteration places a trial guess near such a local extremum, so that the first derivative nearly vanishes, then Newton-Raphson may fail totally.
-
-
-        The basic idea of gradient descent is that a function $F(\mathbf{x}), \mathbf{x} \equiv (x_1, x_2, ..., x_n)$, decreases fastest if one goes from $\mathbf{x}$ in the direction of the negative gradient $-\nabla F(\mathbf{x})$.
+        The basic idea of the gradient descent method is that a function $F(\mathbf{x}), \mathbf{x} \equiv (x_1, x_2, ..., x_n)$, decreases fastest if one goes from $\mathbf{x}$ in the direction of the negative gradient $-\nabla F(\mathbf{x})$.
         It can be shown that if
         \begin{equation}
                 \mathbf{x}_{k+1}
@@ -280,7 +243,7 @@ The code is logged in different branches coenciding with the problems in the pro
         However the method in this form has some severe limitations.
 
         In machine learing we are often faced with non-convex high dimensional cost functions with many local minima. 
-        Since GD is deterministic we will get stuck in a local minimum, if the method converges, unless we have a very good intial guess. 
+        Since the Gradient Descent method is deterministic we will get stuck in a local minimum, if the method converges, unless we have a very good intial guess. 
         This also implies that the scheme is sensitive to the chosen initial condition.
         Note that the gradient is a function of $\mathbf{x} = (x_1, ..., x_n)$ which makes it expensive to compute numerically.
         The gradient descent method is also sensitive to the choice of learning rate $\gamma_k$. 
@@ -299,32 +262,22 @@ The code is logged in different branches coenciding with the problems in the pro
         However these approaches can be computationally expensive, because they involve fitting the same statistical method multiple times using different subsets of the training data. 
         Yet, due to recent advances in computing power, the computational requirements of resampling methods generally are not prohibitive. 
 
-        Why use resampling methods:
-        \begin{itemize}
-            \item Our simulations can be treated as computer experiments. This is particularly the case for Monte Carlo methods
-            \item The results can be analysed with the same statistical tools as we would use analysing experimental data.
-            \item As in all experiments, we are looking for expectation values and an estimate of how accurate they are, i.e., possible sources for errors.
-        \end{itemize}
+        The reasons that that we choose to use these resampling methods are that we treat the computer simulations as experiments run numerically on a computer. This is espessially true for the Monte Carlo methods we have used in this project.
+        We therefore analyse our results using the same statistics tools as we would use analysing experimental data.
+        And as in all experiments, we are looking for expectation values and an estimate of how accurate they are, i.e. possible sources for errors.
+        As in other experiments, these sources of errors come in two classes, statistical and systematical errors.
+        Statistical errors can be estimated using standard tools from statistics, while systematical errors are method specific and must be treated differently from case to case.
 
-        As in other experiments, many numerical experiments have two classes of errors:
-        \begin{itemize}
-            \item Statistical errors
-            \item Systematical errors
-        \end{itemize}
-        Statistical errors can be estimated using standard tools from statistics.
-        Systematical errors are method specific and must be treated differently from case to case.
+        In this project we will use the Blocking method, made popular by Flyvbjerg and Pedersen (1989) and it has since become one of the main ways to estimate $V(\hat{\theta})$ for exactly one $\hat{\theta}$, namely $\hat{\theta} = \bar{X}$.
+        The strength of the blocking method is when the number of observations, $n$ is large. 
+        For instance for large $n$, the complexity of dependent bootstrapping scales poorly, but the blocking method does not, moreover, it becomes more accurate the larger $n$ is.
 
-        In this project we will use the Blocking method.
-        This method was made popular by Flyvbjerg and Pedersen (1989) and has become one of the main ways to estimate $V(\hat{\theta})$ for exactly one $\hat{\theta}$, namely $\hat{\theta} = \bar{X}$.
-        Assume $n = 2^d$ where $d$ is an integer greater than $1$ and $X_1, X_2, ..., X_n$ is a stationary asymptotically uncorrelated time series.
-        Switching to vector notation by arranging $X_1, X_2, ..., X_n$ in an $n$-tuple, we can define
+        In the Blocking method we assume $n = 2^d$ where $d$ is an integer greater than $1$ and $X_1, X_2, ..., X_n$ is a stationary asymptotically uncorrelated time series.
+        Then by switching to vector notation by arranging $X_1, X_2, ..., X_n$ in an $n$-tuple, we can define
         \begin{equation}
                 \hat{\mathbf{X}}
             =   (X_1, X_2, ..., X_n)
         \end{equation}
-
-        The strength of the blocking method is when the number of observations, $n$ is large. 
-        For instance for large $n$, the complexity of dependent bootstrapping scales poorly, but the blocking method does not, moreover, it becomes more accurate the larger $n$ is.
 
         We can now define blocking transformations. 
         The idea is to take the mean of subsequent pairs of elements from $\hat{\mathbf{X}}$ and form a new vector $\hat{\mathbf{X}}_1$.
@@ -335,6 +288,7 @@ The code is logged in different branches coenciding with the problems in the pro
             \equiv
                 (\hat{\mathbf{X}})_k
         \end{equation}
+        and
         \begin{equation}
                 (\hat{\mathbf{X}}_{i+1})_k
             \equiv
@@ -364,7 +318,7 @@ The code is logged in different branches coenciding with the problems in the pro
             =   \frac{1}{4}\gamma_k(2h - 1) + \frac{1}{2}\gamma_k(2h) + \frac{1}{4}\gamma_k(2h + 1)
             \txt{ else}
         \end{equation*}
-        The quantity $\hat{\mathbf{X}}$ is asymptotically uncorrelated by assumption, $\hat{\mathbf{X}}_k$ is also asymptotically uncorrelated. 
+        The quantity $\hat{\mathbf{X}}$ is asymptotically uncorrelated by assumption, and $\hat{\mathbf{X}}_k$ is also asymptotically uncorrelated. 
         
         Let's turn our attention to the variance of the sample mean $V(\bar{X})$.
         We have
@@ -382,8 +336,7 @@ The code is logged in different branches coenciding with the problems in the pro
             =   \frac{2}{n_k} \sum_{h=1}^{n_k - 1} \left(1 - \frac{h}{n_k}\right)\gamma_k(h)
         \end{equation}
         We can now show that $V(\bar{X}_i) = V(\bar{X}j)$ for all $0 \leq i \leq d - 1$ and $0 \leq j \leq d - 1$.
-
-        We can then wrap up
+        Thus
         \begin{equation}
                 n_{j+1}\bar{X}_{j+1}
             =   \sum_{i=1}^{n_j+1} (\hat{\mathbf{X}}_{j+1})_i
@@ -457,19 +410,20 @@ The code is logged in different branches coenciding with the problems in the pro
         \end{array}
     \end{equation}
     \subsection*{Local energy}
-        For non-interacting bosons we set $a=0$ in a spherical potential, $\beta=1$, the trial wavefunction can be written
+        For non-interacting bosons we set $a=0$ in a spherical potential, $\beta=1$, such that the trial wavefunction can be written
         \begin{equation}
                 \Psi_T(\mathbf{r})
             =   e^{-\alpha r^2}
             =   e^{-\alpha (x^2 + y^2 + z^2)}
         \end{equation}
-        such that the double derivative in one dimension
+        
+        The local energy in one dimension is then given by the double derivative in one dimension
         \begin{equation}
                 E_L 
             =   \frac{1}{\Psi_T}H\Psi_T
-            =   \frac{1}{\Psi_T}\dder{\Psi_T}{x}
-            =   -2\alpha\frac{1}{\Psi_T}\parder{\Psi_T}{x}\left(x\Psi_T\right)
-            =   2\alpha{\left(2\alpha x^2 - 1\right)}
+            =   \frac{1}{\Psi_T}\dder{\Psi_T}{x} + V_{ext}
+            =   -2\alpha\frac{1}{\Psi_T}\parder{\Psi_T}{x}\left(x\Psi_T\right) + V_{ext}
+            =   2\alpha{\left(2\alpha x^2 - 1\right)} + V_{ext}
         \end{equation}
         Denoting the vector $\mathbf{r} \equiv \mathbf{x} = (x_1, x_2, x_3)$, with $\nabla^2 = \sum_{i=1}\dder{}{x_i}$, we obtain the double derivative of a single boson in $d$ dimensions
         \begin{equation}
@@ -485,11 +439,11 @@ The code is logged in different branches coenciding with the problems in the pro
             =   \frac{Nd}{2}\hbar\omega_{ho}
             \label{eq: localEnergy}
         \end{equation}
-        using $\alpha = 1/2a_{ho}^2$ and $a_{ho} = \sqrt{\hbar/m\omega_{ho}}$ in the second calculation.
+        here we have used $\alpha = 1/2a_{ho}^2$ and $a_{ho} = \sqrt{\hbar/m\omega_{ho}}$ in the second calculation.
         We note that setting $\hbar=\omega_{ho}=m=1$ gives $\alpha=1/2$.
 
     \subsection*{Drift force}
-        Again denoting $\mathbf{r} \equiv \mathbf{x} = (x_1, x_2, x_3)$, the drift force
+        Again denoting $\mathbf{r} \equiv \mathbf{x} = (x_1, x_2, x_3)$, the quantum force
         \begin{equation}
                 \mathbf{F}
             =   \frac{2\nabla \Psi_T(\mathbf{x})}{\Psi_T(\mathbf{x})}
@@ -519,13 +473,13 @@ The code is logged in different branches coenciding with the problems in the pro
         \begin{equation}
                     \nabla_k\left(e^{\sum_{j<m} u(r_{jm})}\right)
                 =   e^{\sum_{j<m} u(r_{jm})} \nabla_k\sum_{j<m}u(r_{jm})
-                =   e^{\sum_{j<m} u(r_{jm})} \sum_{k\neq l}\nabla_k u(r_{kl})
+                =   e^{\sum_{j<m} u(r_{jm})} \sum_{l \neq k}\nabla_k u(r_{kl})
                 \label{eq: dere}
         \end{equation}
         such that
         \begin{equation}
                 \nabla_k\Psi_T 
-            =   \nabla_k\phi(\mathbf{r}_k)\left[\prod_{i\neq k}\phi(\mathbf{r}_i)\right] e^{\sum_{j<m} u(r_{jm})} + \left[\prod_i\phi(\mathbf{r}_i)\right] e^{\sum_{j<m} u(r_{jm})} \sum_{k\neq l}\nabla_k u(r_{kl})
+            =   \nabla_k\phi(\mathbf{r}_k)\left[\prod_{i \neq k}\phi(\mathbf{r}_i)\right] e^{\sum_{j<m} u(r_{jm})} + \left[\prod_i\phi(\mathbf{r}_i)\right] e^{\sum_{j<m} u(r_{jm})} \sum_{l \neq k}\nabla_k u(r_{kl})
             \label{eq: first der}
         \end{equation}     
 
@@ -544,32 +498,32 @@ The code is logged in different branches coenciding with the problems in the pro
         Using eq \ref*{eq: dere} we find that the second term of eq \ref*{eq: more derivations}
         \begin{equation}
                 \frac{\nabla_k \phi(\mathbf{r}_k) \left[\prod_{i\neq k}\phi(\mathbf{r}_i)\right]}{\Psi_T} \nabla_k e^{\sum_{j<m} u(r_{jm})}
-            =   \frac{\nabla_k \phi(\mathbf{r}_k)}{\phi(\mathbf{r}_k)} \sum_{k\neq l}\nabla_k u(r_{kl})
+            =   \frac{\nabla_k \phi(\mathbf{r}_k)}{\phi(\mathbf{r}_k)} \sum_{l \neq k}\nabla_k u(r_{kl})
         \end{equation}
         moving on to the second term of eq \ref*{eq: first der}
         \begin{align}
         \begin{split}
-                &\nabla_k\left(\left[\prod_i\phi(\mathbf{r}_i)\right] e^{\sum_{j<m} u(r_{jm})} \sum_{k\neq l}\nabla_k u(r_{kl})\right)\\
-            =   &e^{\sum_{j<m} u(r_{jm})} \sum_{k\neq l}\nabla_k u(r_{kl}) \nabla_k \left[\prod_i\phi(\mathbf{r}_i)\right] 
-                + \left[\prod_i\phi(\mathbf{r}_i)\right] \sum_{k\neq l}\nabla_k u(r_{kl}) \nabla_k e^{\sum_{j<m} u(r_{jm})}\\
-            &+  \left[\prod_i\phi(\mathbf{r}_i)\right] e^{\sum_{j<m} u(r_{jm})} \nabla_k \sum_{k\neq l}\nabla_k u(r_{kl})
+                &\nabla_k\left(\left[\prod_i\phi(\mathbf{r}_i)\right] e^{\sum_{j<m} u(r_{jm})} \sum_{l \neq k}\nabla_k u(r_{kl})\right)\\
+            =   &e^{\sum_{j<m} u(r_{jm})} \sum_{l \neq k}\nabla_k u(r_{kl}) \nabla_k \left[\prod_i\phi(\mathbf{r}_i)\right] 
+                + \left[\prod_i\phi(\mathbf{r}_i)\right] \sum_{l \neq k}\nabla_k u(r_{kl}) \nabla_k e^{\sum_{j<m} u(r_{jm})}\\
+            &+  \left[\prod_i\phi(\mathbf{r}_i)\right] e^{\sum_{j<m} u(r_{jm})} \nabla_k \sum_{l \neq k}\nabla_k u(r_{kl})
             \label{eq: second der}
         \end{split}
         \end{align}
         we find the first term of eq \ref*{eq: second der}
         \begin{equation}
-                \frac{1}{\Psi_T} e^{\sum_{j<m} u(r_{jm})} \sum_{k\neq l}\nabla_k u(r_{kl}) \nabla_k \left[\prod_i\phi(\mathbf{r}_i)\right]
-            =   \frac{\nabla_k \phi(\mathbf{r}_k)}{\phi(\mathbf{r}_k)} \sum_{k\neq l}\nabla_k u(r_{kl})
+                \frac{1}{\Psi_T} e^{\sum_{j<m} u(r_{jm})} \sum_{l \neq k}\nabla_k u(r_{kl}) \nabla_k \left[\prod_i\phi(\mathbf{r}_i)\right]
+            =   \frac{\nabla_k \phi(\mathbf{r}_k)}{\phi(\mathbf{r}_k)} \sum_{l \neq k}\nabla_k u(r_{kl})
         \end{equation}
         then the second term
         \begin{equation}
-                \frac{1}{\Psi_T}\left[\prod_i\phi(\mathbf{r}_i)\right] \sum_{k\neq l}\nabla_k u(r_{kl}) \nabla_k e^{\sum_{j<m} u(r_{jm})}
-            =   \left(\sum_{k\neq l}\nabla_k u(r_{kl})\right) \left(\sum_{k\neq i}\nabla_k u(r_{ki})\right)
+                \frac{1}{\Psi_T}\left[\prod_i\phi(\mathbf{r}_i)\right] \sum_{l \neq k}\nabla_k u(r_{kl}) \nabla_k e^{\sum_{j<m} u(r_{jm})}
+            =   \left(\sum_{l \neq k}\nabla_k u(r_{kl})\right) \left(\sum_{i \neq k}\nabla_k u(r_{ki})\right)
         \end{equation}
         and lastly the third term
         \begin{equation}
-                \frac{1}{\Psi_T}\left[\prod_i\phi(\mathbf{r}_i)\right] e^{\sum_{j<m} u(r_{jm})} \nabla_k \sum_{k\neq l}\nabla_k u(r_{kl})
-            =   \sum_{k\neq l} \nabla_k^2 u(r_{kl})
+                \frac{1}{\Psi_T}\left[\prod_i\phi(\mathbf{r}_i)\right] e^{\sum_{j<m} u(r_{jm})} \nabla_k \sum_{l \neq k}\nabla_k u(r_{kl})
+            =   \sum_{l \neq k} \nabla_k^2 u(r_{kl})
         \end{equation}
 
         Now with the realtions
@@ -597,8 +551,8 @@ The code is logged in different branches coenciding with the problems in the pro
         Then using 
         \begin{equation}
                 u'(r_{kj})
-            =   \derivative{u}{r_{kj}}
-            =   \frac{1}{f(a, r_{kj})} f(a,r_{kj})
+            =   \derivative{\ln(f(a, r_{kj}))}{r_{kj}}
+            =   \frac{1}{f(a, r_{kj})} f'(a,r_{kj})
             =   \frac{a}{r_{kj}^2}\frac{1}{f(a, r{kj})}
         \end{equation}
         and
@@ -638,42 +592,26 @@ The code is logged in different branches coenciding with the problems in the pro
 
 
     \subsection*{Onebody densities}
-        The one-body density for $N$ non-interacting particles in a harmonic oscillator is given by 
+        The onebody density for $N$ particles is given by
         \begin{equation}
                 \rho(\mathbf{r}_1)
-            =   \int \prod_{i=2}^{N} d^3\mathbf{r}_i \abs{\Psi_T(\mathbf{r}_1, \mathbf{r}_2, ..., \mathbf{r}_N)}^2
-            =   e^{-2\alpha\mathbf{r}_1^2} \left(\int d^3\mathbf{r} e^{-2\alpha\mathbf{r}^2}\right)^{N-1}
-            =   \left(\frac{\pi}{\alpha}\right)^\frac{3(N-1)}{2} e^{-2\alpha \mathbf{r}_1^2}
+            =   N \int \prod_{i=2}^{N} d^3\mathbf{r}_i \abs{\Psi_T(\mathbf{r}_1, \mathbf{r}_2, ..., \mathbf{r}_N)}^2
         \end{equation}
-        We note that the system is isotropic, such that the orientation in space is irrelevant, and thus by normalizing the expression for $\rho$
-        \begin{equation}
-                \rho(r)
-            =   \left(\frac{8\alpha}{\pi}\right)^\frac{1}{2} e^{-2 \alpha r^2}
-        \end{equation}
-
-        In the interacting case we limit ourselves to the two-particle case.
+        Inserting our trial wavefunction from the harmonic oscillator case
         \begin{equation}
                 \rho(\mathbf{r}_1)
-            =   g^2(\mathbf{r}_1) \int d^3\mathbf{r}_2 g^2(\mathbf{r}_2) f^2(a, \abs{\mathbf{r}_1 - \mathbf{r}_2})
+            =   N phi^2(\mathbf{r}_1) \int \prod_{i=2}^{N} d^3\mathbf{r}_i \phi^2(\mathbf{r}_i) \prod_{j < i} f^2(a, \abs{\mathbf{r}_i - \mathbf{r}_j})
         \end{equation}
-        Defining the new vector $\mathbf{u} = \mathbf{r}_2 - \mathbf{r}_1$
+        Limiting ourselves to two particles, we can see that in the non-interacting case the onebody density reduces to 
         \begin{equation}
                 \rho(\mathbf{r}_1)
-            =   g^2(\mathbf{r}_1) \int d^3 \mathbf{u}g^2(\mathbf{u} + \mathbf{r}_1) f^2(a, \abs{u})
-            =   e^{-4 \alpha \mathbf{r}_1^2} \int d^3\mathbf{u} e^{-2 \alpha (\mathbf{u}^2 + 2(\mathbf{u} + \mathbf{r}_1))} f^2(a, \abs{\mathbf{u}})
+            =   2 \phi^2(\mathbf{r}_1) \int d^3\mathbf{r}_2 \phi^2(\mathbf{r}_2)
         \end{equation}
-        Again as the system is isotropic the orientation is irrelevant and we can assume $\mathbf{r}_1$ to be in the $z$-direction.
-        The expression can then be solved by converting the integral to spherical coordinates and integrating out the angular dependencies.
+        while in the interacting case 
         \begin{equation}
                 \rho(\mathbf{r}_1)
-            =   \frac{\pi}{\alpha r_1}e^{-4 \alpha r_1^2} \int_{0}^{\infty} du u\sinh(4 \alpha u r_1) e^{-2 \alpha u} f^2(a, u)
+            =   2 \phi^2(\mathbf{r}_1) \int d^3\mathbf{r}_2 \phi^2(\mathbf{r}_2) f^2(a, \abs{\mathbf{r}_1 - \mathbf{r}_2})
         \end{equation}
-        Removing the trivial case of $f(a, \mathbf{r}_1) = 0$ for $\abs{\mathbf{r}_1} \leq a$ we then get
-        \begin{equation}
-                \rho(\mathbf{r}_1)
-            =   \frac{\pi}{\alpha r_1}e^{-4 \alpha r_1^2} \int_{a}^{\infty} du u\sinh(4 \alpha u r_1) e^{-2 \alpha u} \left(1 - \frac{a}{u}\right)^2
-        \end{equation}
-
 
 
 \section{\large Numerical approach}
@@ -683,8 +621,8 @@ The code is logged in different branches coenciding with the problems in the pro
     The Metropolis algorithm is used on a single particle in a single dimension at a time and sampled once every particle in every dimension has undergone i single Monte Carlo step.
     When all Monte Carlo steps are completed we calculate the mean energy and variance of the system for a given parameter $\alpha$ and redo the calculation with different values of $\alpha$ to get an understanding of how the system changes with this parameter.
     
-    The calculations are run for $n = 1$, $n = 10$ and $n=100$, where $n$ denotes the number of particles, with the parameter $\alpha \in [0.2, 0.9]$.
-    The results of these calcualtions are shown in figures \ref{fig: B1}, \ref{fig: B10} and \ref{fig: B100}.
+    The calculations are run for $n = 1$, $n = 10$, $n=100$ and $n = 500$, where $n$ denotes the number of particles, with the parameter $\alpha \in [0.2, 0.9]$.
+    The results of these calcualtions are shown in figures \ref{fig: B1}, \ref{fig: B10}, \ref{fig: B100} and \ref{fig: B500}.
     For non-interacting bosons, using natural units, we expect the to find the minimum energies for $\alpha = 0.5$.
     This matches all three of our calculations, and we note that the variance for $alpha = 0.5$ is $0$ wich is also to be expected from eq \ref*{eq: localEnergy}.
     \def\imwidth{0.49\textwidth}
@@ -727,10 +665,12 @@ The code is logged in different branches coenciding with the problems in the pro
     The implementation of importance sampling to our calculations allows us to more efficiently sample the areas in coordinate space where the trial wavefunction is greater.
     Thus we aim to find the same ground state energies as with the brute force calculations but with fewer steps needed.
 
-    The calculations are again run for $n = 1$, $n = 10$ and $n=100$ with the parameter $\alpha \in [0.2, 0.9]$.
-    With the new results shown in figures \ref{fig: C1}, \ref{fig: C10} and \ref{fig: C100}.
-    Comparing these to figures \ref{fig: B1}, \ref{fig: B10} and \ref{fig: B100} we note the great simularities and same over results from the brute force Monte Carlo calculations.
-    The mayor difference between the importance sampling and the brute force way is the time spent on these calculations, this is shown in table \ref{table: time spent}.
+    The calculations are again run for $n = 1$, $n = 10$, $n=100$ and $n=500$ with the parameter $\alpha \in [0.2, 0.9]$.
+    With the new results shown in figures \ref{fig: C1}, \ref{fig: C10}, \ref{fig: C100} and \ref{fig: C500}.
+    Comparing these to figures \ref{fig: B1}, \ref{fig: B10}, \ref{fig: B100} and \ref{fig: B500} we note the great simularities and same overall results from the brute force Monte Carlo calculations.
+    The mayor difference between the importance sampling and the brute force way is the number of Monte Carlo cycles used.
+    In the brute force scenario we have used $10^6$ cycles while when using importance sampling we have used $10^5$ cycles.
+    This naturally leads to lower times spent on these calculations, this is shown in table \ref{table: time spent}.
     \begin{figure}[!ht]
         \centering
         \includegraphics[width=\imwidth]{figures/Energy_C_1.png}
@@ -775,13 +715,31 @@ The code is logged in different branches coenciding with the problems in the pro
     \end{table}
 
     In the previous calculations we simply plotted the expectation values of the energies as a function of the parameter $\alpha$.
-    For large systems this means that we spend equally many Monte Carlo cycles for values of $\alpha$ that are far away from the energy minimum.
+    For large systems this means that we spend equally many Monte Carlo cycles for values of $\alpha$ that are far away from the energy minimum as those that are close to it.
     To improve upon this we implement a steepest descent algorithm to minimize the energy and obtain the best possible value of $\alpha$.
-    This algorithm is tested with a weight of $\eta = 0.01$ for $n = 1$ in one dimension, $n = 2$ in two dimensions and $n = 3$ in three dimensions.
+    This algorithm is tested with a weight of $\eta = 0.01$, altough this was later changed to $\eta = 0.1/n$, for $n = 1$ in one dimension, $n = 2$ in two dimensions and $n = 3$ in three dimensions.
     The algorithm is stopped if the approximation for the energy derivative is lower than $10^{-4}$.
     For one particle in one dimension the algorithm reached $\alpha = 0.493966$ after 154 iterations.
     For two particles in two dimension the algorithm reached $\alpha = 0.4938934$ after 57 iterations.
     For three particles in three dimension the algorithm reached $\alpha = 0.499258$ after 23 iterations.
+
+    In table \ref*{table: E} we see the results from the previously done calculations, with importance sampling, analysed using the blocking method.
+    We note that the results largely match the analytic results and that the standard deviations are low inn all cases.
+    The calcualtions are done for $n=1$, $n=10$, $n=50$ and $n=100$ with the values of alpha found with the gradient descent method.
+    We can see that even with small variations in $\alpha$ the resulting energy is very close to the expected values at the optimal $\alpha = 0.5$.
+    All computations that are shown in table \ref{table: E} have started with an initial guess for the variational paramet $\alpha = 0.4$.
+    \begin{table}[!ht]
+        \begin{tabular}{|l|l|l|l|}
+        \hline
+        Number of particles & Variational parameter $\alpha$    & Ground state energy   & Standard deviation    \\ \hline
+        1                   & 0.498959                          & 1.500023              & 0.000037              \\ \hline
+        10                  & 0.499256                          & 14.999892             & 0.000052              \\ \hline
+        50                  & 0.495986                          & 75.001869             & 0.001104              \\ \hline
+        100                 & 0.492543                          & 150.026922            & 0.002663              \\ \hline
+        \end{tabular}
+        \caption{Results from Monte Carlo calculation for non-interacting particles in a spherical trap.}
+        \label{table: E}
+    \end{table}
 
     Now that it is clear the calculations give the expected results for the non-interacting case we can move on to paralleize the code using OpenMP.
     The main idea behind the parallizition is to run the calculations several times averaging over the results.
@@ -832,21 +790,18 @@ The code is logged in different branches coenciding with the problems in the pro
     \begin{table}[!ht]
         \begin{tabular}{|l|l|}
         \hline
-                                        & Onebody density       \\ \hline
-        Without repulsive interaction   & 0.478737              \\ \hline
-        With repulsive interaction      & 0.000987037           \\ \hline
+                                        & Onebody density                   \\ \hline
+        Without repulsive interaction   & 0.702154 $\phi^2(\mathbf{r}_1)$   \\ \hline
+        With repulsive interaction      & 0.669945 $\phi^2(\mathbf{r}_1)$   \\ \hline
         \end{tabular}
-        \caption{}
+        \caption{Calculated values for the onebody density for two particles, with and without the repulsive interaction.}
         \label{results 3}
     \end{table}
 
     In table \ref*{results 3} we see the results of the onebody calculations run for two particles with and without the repulsive interaction.
-    There is a clear decrease in the onebody density as a result of the repuslive interaction.
+    There is a decrease in the onebody density as a result of the repuslive interaction.
     
     
-    
-
-
 \section{Review of the project}
     Let us start with the positives.
     I feel like I have learned quite a few things working my way through this project.
