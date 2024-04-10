@@ -21,21 +21,6 @@ SimpleGaussian::SimpleGaussian(double alpha)
     m_a = 0.0043;
 }
 
-double SimpleGaussian::evaluate(std::vector<std::unique_ptr<class Particle>>& particles) {
-    // Define the wavefunction in nD for n particles from the definition of 1D
-    // This function isnt really used
-    double E = 1;
-    double p = particles.size();
-    double d = particles.at(0)->getPosition().size();
-    for (unsigned int i = 0; i < p; i++){
-        for (unsigned int j = 0; j < d; j++) {
-            double x = particles.at(i)->getPosition().at(j);
-            E *= evaluate1D(x, j);
-        }
-    }
-    return E;
-}
-
 double SimpleGaussian::evaluate1D(double x, unsigned int dimension) {
     // Define the wavefunction for 1 dimension
     // This is used for optimization in the metroplis algo
