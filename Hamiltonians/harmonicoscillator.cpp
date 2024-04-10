@@ -34,28 +34,12 @@ double HarmonicOscillator::computeLocalEnergy(
 double HarmonicOscillator::computeOnebodyDensity(
             class WaveFunction& waveFunction,
             std::vector<std::unique_ptr<class Particle>>& particles) {
-    double a = waveFunction.geta();
-    std::vector<double> r_1 = particles.at(0)->getPosition();
-    double alpha = waveFunction.getParameters().at(0);
-    if (a != 0) {
-        std::vector<double> r_2 = particles.at(1)->getPosition();
-        double u2 = 0, r2 = 0;  
-        for (unsigned int i=0; i<r_1.size(); i++) {
-            u2 += (r_2.at(i) - r_1.at(i))*(r_2.at(i) - r_1.at(i));
-            r2 += r_1.at(i)*r_1.at(i);
-        }
-        
-        double u = sqrt(u2);
-        double r = sqrt(r2);
-        
-        return M_PI / (alpha * r) * exp(-4*alpha*r2) * u * sinh(4*alpha*u*r)*exp(-2*alpha*u)*(1 - a/u)*(1 - a/u);
+    std::vector<double> r_2 = particles.at(1)->getPosition();
+    double wf = 1;
+    for (unsigned int i=0; i<r_2.size(); i++) {
+        wf *= waveFunction.evaluate1D(r_2.at(i), i);
     }
-    else {
-        double r2 = 0;
-        for (double x:r_1) {
-            r2 += x*x;
-        }
-        return sqrt(8 * alpha / M_PI) * exp(-2 * alpha * r2);
-    }
+    wf *= waveFunction.reducedF(particles, r_2, 1);
 
+    return 2*wf*wf;
 }
